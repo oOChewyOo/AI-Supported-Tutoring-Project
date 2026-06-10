@@ -1,0 +1,60 @@
+ ⨯ Error: Could not load lesson reflections: Could not find the table 'public.lesson_reflections' in the schema cache
+    at listLessonReflections (lib\data.ts:85:20)
+    at async StudentPage (app\students\[id]\page.tsx:8:34)
+  83 |     .order("created_at", { ascending: false });
+  84 |
+> 85 |   if (error) throw new Error(`Could not load lesson reflections: ${error.message}`);
+     |                    ^
+  86 |   return ((data ?? []) as LessonReflectionRow[]).map(toLessonReflection);
+  87 | }
+  88 | {
+  digest: '3237008641'
+}
+ ⨯ Error: Could not load lesson reflections: Could not find the table 'public.lesson_reflections' in the schema cache
+    at listLessonReflections (lib\data.ts:85:20)
+    at async StudentPage (app\students\[id]\page.tsx:8:34)
+  83 |     .order("created_at", { ascending: false });
+  84 |
+> 85 |   if (error) throw new Error(`Could not load lesson reflections: ${error.message}`);
+     |                    ^
+  86 |   return ((data ?? []) as LessonReflectionRow[]).map(toLessonReflection);
+  87 | }
+  88 | {
+  digest: '3237008641'
+}
+ ⨯ Error: Could not load lesson reflections: Could not find the table 'public.lesson_reflections' in the schema cache
+    at listLessonReflections (lib\data.ts:85:20)
+    at async StudentPage (app\students\[id]\page.tsx:8:34)
+  83 |     .order("created_at", { ascending: false });
+  84 |
+> 85 |   if (error) throw new Error(`Could not load lesson reflections: ${error.message}`);
+     |                    ^
+  86 |   return ((data ?? []) as LessonReflectionRow[]).map(toLessonReflection);
+  87 | }
+  88 | {
+  digest: '3237008641'
+}
+ ⨯ Error: Could not load lesson reflections: Could not find the table 'public.lesson_reflections' in the schema cache
+    at listLessonReflections (lib\data.ts:85:20)
+    at async StudentPage (app\students\[id]\page.tsx:8:34)
+  83 |     .order("created_at", { ascending: false });
+  84 |
+> 85 |   if (error) throw new Error(`Could not load lesson reflections: ${error.message}`);
+     |                    ^
+  86 |   return ((data ?? []) as LessonReflectionRow[]).map(toLessonReflection);
+  87 | }
+  88 | {
+  digest: '3237008641'
+}
+ ⨯ Error: Could not load lesson reflections: Could not find the table 'public.lesson_reflections' in the schema cache
+    at listLessonReflections (lib\data.ts:85:20)
+    at async StudentPage (app\students\[id]\page.tsx:8:34)
+  83 |     .order("created_at", { ascending: false });
+  84 |
+> 85 |   if (error) throw new Error(`Could not load lesson reflections: ${error.message}`);
+     |                    ^
+  86 |   return ((data ?? []) as LessonReflectionRow[]).map(toLessonReflection);
+  87 | }
+  88 | {
+  digest: '3237008641'
+}

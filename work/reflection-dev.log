@@ -1,0 +1,41 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.8s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 15.9s (666 modules)
+ GET /dashboard 200 in 17732ms
+ ○ Compiling /students/[id] ...
+ ✓ Compiled /students/[id] in 2.1s (679 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 4233ms
+ ○ Compiling /students/[id]/reflections/new ...
+ ✓ Compiled /students/[id]/reflections/new in 3s (846 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92/reflections/new 200 in 5584ms
+ GET /dashboard 200 in 377ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 276ms
+ GET /dashboard 200 in 205ms
+ GET /dashboard 200 in 274ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 209ms
+ GET /dashboard 200 in 160ms
+ GET /dashboard 200 in 190ms
+ GET /dashboard 200 in 193ms
+ ○ Compiling / ...
+ ✓ Compiled / in 827ms (698 modules)
+ GET / 200 in 1190ms
+ GET /dashboard 200 in 306ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 245ms
+ GET /dashboard 200 in 300ms
+ GET /dashboard 200 in 658ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 238ms
+ GET / 200 in 91ms
+ GET /dashboard 200 in 203ms
+ GET /dashboard 200 in 310ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 288ms
+ ○ Compiling /students/[id]/reflections/new ...
+ ✓ Compiled /students/[id]/reflections/new in 659ms (612 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92/reflections/new 200 in 1254ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 308ms
+ POST /students/f374cc2e-f297-4eba-9436-d839e2ef6c92/reflections/new 303 in 842ms

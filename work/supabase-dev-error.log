@@ -1,0 +1,289 @@
+ ⨯ Error: Could not load students: Could not find the table 'public.students' in the schema cache
+    at listStudents (lib\data.ts:34:20)
+    at async DashboardPage (app\dashboard\page.tsx:8:20)
+  32 |     .order("name");
+  33 |
+> 34 |   if (error) throw new Error(`Could not load students: ${error.message}`);
+     |                    ^
+  35 |   return ((data ?? []) as StudentRow[]).map(toStudent);
+  36 | }
+  37 | {
+  digest: '651930608'
+}
+ ⨯ Error: Could not load students: Could not find the table 'public.students' in the schema cache
+    at listStudents (lib\data.ts:34:20)
+    at async DashboardPage (app\dashboard\page.tsx:8:20)
+  32 |     .order("name");
+  33 |
+> 34 |   if (error) throw new Error(`Could not load students: ${error.message}`);
+     |                    ^
+  35 |   return ((data ?? []) as StudentRow[]).map(toStudent);
+  36 | }
+  37 | {
+  digest: '651930608'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\prerender-manifest.json',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\prerender-manifest.json',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\prerender-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\prerender-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\prerender-manifest.json',
+  page: '/dashboard'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\prerender-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\prerender-manifest.json',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\app\\dashboard\\page.js',
+  page: '/dashboard'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\pages\_document.js'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\server\\pages\\_document.js'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+[Error: ENOENT: no such file or directory, open 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\routes-manifest.json'] {
+  errno: -4058,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: 'C:\\Users\\chris\\Documents\\Codex\\2026-06-09\\i-want-to-build-an-mvp\\.next\\routes-manifest.json'
+}
+<w> [webpack.cache.PackFileCacheStrategy] Caching failed for pack: Error: ENOENT: no such file or directory, rename 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\cache\webpack\client-development-fallback\0.pack.gz_' -> 'C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\cache\webpack\client-development-fallback\0.pack.gz'

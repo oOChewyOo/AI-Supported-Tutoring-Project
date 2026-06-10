@@ -1,0 +1,65 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 6.2s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 13.8s (666 modules)
+ GET /dashboard 200 in 15921ms
+ ○ Compiling /dashboard/students/new ...
+ ✓ Compiled /dashboard/students/new in 3.1s (812 modules)
+ GET /dashboard/students/new 200 in 4266ms
+ GET /dashboard 200 in 369ms
+ ○ Compiling / ...
+ ✓ Compiled / in 835ms (673 modules)
+ GET / 200 in 1393ms
+ ○ Compiling /dashboard/students/new ...
+ ✓ Compiled /dashboard/students/new in 541ms (585 modules)
+ GET /dashboard/students/new 200 in 1526ms
+ POST /dashboard/students/new 200 in 329ms
+ GET /dashboard/students/new 200 in 459ms
+ GET /dashboard/students/new 200 in 83ms
+ ○ Compiling /students/[id] ...
+ ✓ Compiled /students/[id] in 1234ms (845 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 2500ms
+ POST /dashboard/students/new 303 in 2986ms
+ GET /dashboard 200 in 228ms
+ GET /dashboard 200 in 426ms
+ GET / 200 in 105ms
+ GET /dashboard 200 in 478ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 294ms
+ GET / 200 in 79ms
+ GET /dashboard 200 in 165ms
+ GET /dashboard 200 in 196ms
+ ✓ Compiled in 2.1s (845 modules)
+ GET /dashboard 200 in 443ms
+ GET /dashboard 200 in 439ms
+ ✓ Compiled in 331ms (606 modules)
+ GET /dashboard 200 in 277ms
+ GET /dashboard 200 in 292ms
+ ✓ Compiled in 1567ms (859 modules)
+ GET /dashboard 200 in 336ms
+ GET /dashboard 200 in 348ms
+ ✓ Compiled in 765ms (606 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 5.6s (1192 modules)
+ GET /dashboard 500 in 29977ms
+ GET /dashboard 500 in 359ms
+ GET /dashboard 500 in 29977ms
+ GET /dashboard 500 in 361ms
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 9.1s (1197 modules)
+ GET /dashboard 500 in 12156ms
+ GET /dashboard 500 in 422ms
+ GET /dashboard 500 in 12153ms
+ GET /dashboard 500 in 423ms
+ GET /dashboard 500 in 844ms
+ GET /dashboard 500 in 298ms
+ GET /dashboard 500 in 849ms
+ GET /dashboard 500 in 299ms
+ GET /dashboard 500 in 809ms
+ GET /dashboard 500 in 240ms
+ GET /dashboard 500 in 757ms
+ GET /dashboard 500 in 243ms
