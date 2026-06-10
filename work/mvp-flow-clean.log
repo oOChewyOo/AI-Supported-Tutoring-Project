@@ -1,0 +1,56 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 8.9s (666 modules)
+ GET /dashboard 200 in 10578ms
+ ○ Compiling /students/[id] ...
+ ✓ Compiled /students/[id] in 2.5s (835 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 4839ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 953ms
+ ○ Compiling / ...
+ ✓ Compiled / in 2.4s (828 modules)
+ GET / 200 in 2858ms
+ GET / 200 in 138ms
+ ✓ Compiled /dashboard in 359ms (604 modules)
+ GET /dashboard 200 in 1004ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 424ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 985ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 1142ms
+ ○ Compiling /plans/[id] ...
+ ✓ Compiled /plans/[id] in 2.4s (854 modules)
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 200 in 4369ms
+ POST /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 303 in 4882ms
+ ○ Compiling /activities/[id] ...
+ ✓ Compiled /activities/[id] in 1289ms (874 modules)
+ GET /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 200 in 3011ms
+ GET /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 200 in 488ms
+ GET / 200 in 443ms
+ GET /dashboard 200 in 1547ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 3846ms
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 200 in 2869ms
+ ✓ Compiled in 23.4s (876 modules)
+ ✓ Compiled in 5.7s (890 modules)
+ ✓ Compiled in 7.4s (890 modules)
+ GET /activities/f98908f8-484e-4be6-afa3-65e18ac20743 200 in 850ms
+ GET /activities/f98908f8-484e-4be6-afa3-65e18ac20743 200 in 562ms
+ ○ Compiling /dashboard/students/new ...
+ ✓ Compiled /dashboard/students/new in 3.8s (888 modules)
+ ○ Compiling /_error ...
+ GET /dashboard/students/new 200 in 5961ms
+ ✓ Compiled /_error in 7.1s (1235 modules)
+ GET /dashboard 500 in 15983ms
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 500 in 15942ms
+ GET / 500 in 15992ms
+ POST /activities/f98908f8-484e-4be6-afa3-65e18ac20743 500 in 12461ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 4997ms
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 200 in 1767ms
+ GET /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 200 in 1650ms
+ GET /dashboard 200 in 622ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 500 in 2540ms
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 500 in 1545ms
+ GET /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 500 in 1926ms

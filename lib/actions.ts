@@ -12,6 +12,14 @@ export type LessonReflectionFormState = {
   error?: string;
 };
 
+export type PlanActionState = {
+  error?: string;
+};
+
+export type ActivityActionState = {
+  error?: string;
+};
+
 function list(value: FormDataEntryValue | null) {
   return String(value ?? "")
     .split(",")
@@ -96,4 +104,49 @@ export async function createLessonReflectionAction(
 
   revalidatePath(`/students/${studentId}`);
   redirect(`/students/${studentId}`);
+}
+
+export async function generateWeeklyPlanAction(
+  reflectionId: string,
+  _previousState: PlanActionState,
+): Promise<PlanActionState> {
+  void _previousState;
+  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
+
+  const { data, error } = await createSupabaseServerClient().rpc("generate_placeholder_weekly_plan", {
+    p_reflection_id: reflectionId,
+  });
+
+  if (error) return { error: `Could not generate weekly plan: ${error.message}` };
+  redirect(`/plans/${data}`);
+}
+
+export async function setActivityCompletionAction(
+  activityId: string,
+  studentId: string,
+  planId: string,
+  completed: boolean,
+  _previousState: ActivityActionState,
+): Promise<ActivityActionState> {
+  void _previousState;
+  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
+
+  const { error } = await createSupabaseServerClient()
+    .from("activity_results")
+    .upsert(
+      {
+        activity_id: activityId,
+        student_id: studentId,
+        completed,
+        completed_at: completed ? new Date().toISOString() : null,
+      },
+      { onConflict: "activity_id,student_id" },
+    );
+
+  if (error) return { error: `Could not update completion: ${error.message}` };
+
+  revalidatePath(`/activities/${activityId}`);
+  revalidatePath(`/plans/${planId}`);
+  revalidatePath(`/students/${studentId}`);
+  redirect(`/plans/${planId}`);
 }

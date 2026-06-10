@@ -20,26 +20,25 @@ export type LessonReflection = {
 };
 
 export type ActivityType =
-  | "Quick quiz"
-  | "Sort & match"
-  | "Flashcards"
-  | "Fill the gap"
-  | "Mini read"
-  | "Fluency check";
+  | "Topic practice"
+  | "Retrieval practice"
+  | "Challenge and reflection";
 
 export type PracticeActivity = {
-  id?: string;
+  id: string;
   title: string;
   type: ActivityType;
   minutes: number;
   description: string;
+  completed: boolean;
 };
 
 export type PracticeSession = {
-  id?: string;
-  day: string;
+  id: string;
+  sessionNumber: number;
   title: string;
-  focus: string;
+  durationMinutes: number;
+  completed: boolean;
   activities: PracticeActivity[];
 };
 
@@ -47,7 +46,29 @@ export type WeeklyPlan = {
   id: string;
   student: Student;
   reflection: LessonReflection;
-  weekStart: string;
-  primaryFocus: string;
+  title: string;
+  focus: string;
+  createdAt: string;
   sessions: PracticeSession[];
+};
+
+export type WeeklyPlanSummary = {
+  id: string;
+  lessonReflectionId: string;
+  title: string;
+  focus: string;
+  createdAt: string;
+  sessionsCompleted: number;
+  sessionsTotal: number;
+  activitiesCompleted: number;
+  activitiesTotal: number;
+};
+
+export type StudentProgress = {
+  plansTotal: number;
+  sessionsCompleted: number;
+  sessionsTotal: number;
+  activitiesCompleted: number;
+  activitiesTotal: number;
+  percentageComplete: number;
 };

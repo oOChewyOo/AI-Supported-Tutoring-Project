@@ -1,12 +1,19 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, BookOpenText, Brain, Heart, Plus, Target } from "lucide-react";
-import { getStudent, listLessonReflections } from "@/lib/data";
+import { ArrowLeft, ArrowRight, BookOpenText, Brain, CheckCircle2, Heart, Plus, Target } from "lucide-react";
+import { GeneratePlanButton } from "@/components/generate-plan-button";
+import { getStudent, getStudentProgress, listLessonReflections, listWeeklyPlans } from "@/lib/data";
 
 export default async function StudentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [student, reflections] = await Promise.all([getStudent(id), listLessonReflections(id)]);
+  const [student, reflections, plans, progress] = await Promise.all([
+    getStudent(id),
+    listLessonReflections(id),
+    listWeeklyPlans(id),
+    getStudentProgress(id),
+  ]);
   if (!student) notFound();
+  const latestFocus = reflections[0]?.whatNeedsPractice ?? student.needsPractice[0] ?? "Not set yet";
 
   return (
     <main className="page-shell">
@@ -23,6 +30,14 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
         <article><Brain size={20} /><span>Strengths</span><div className="tag-list">{student.strengths.length ? student.strengths.map((item) => <em key={item}>{item}</em>) : <em>Not set yet</em>}</div></article>
         <article><Target size={20} /><span>Needs practice</span><div className="tag-list">{student.needsPractice.length ? student.needsPractice.map((item) => <em key={item}>{item}</em>) : <em>Not set yet</em>}</div></article>
         <article><BookOpenText size={20} /><span>Subject focus</span><strong>{student.subjectFocus}</strong><p>Current learning path</p></article>
+      </section>
+      <section className="progress-grid">
+        <div><span>Latest focus</span><strong>{latestFocus}</strong></div>
+        <div><span>Weekly plans</span><strong>{progress.plansTotal}</strong></div>
+        <div><span>Total sessions</span><strong>{progress.sessionsTotal}</strong></div>
+        <div><span>Total activities</span><strong>{progress.activitiesTotal}</strong></div>
+        <div><span>Activities completed</span><strong>{progress.activitiesCompleted} / {progress.activitiesTotal}</strong></div>
+        <div><span>Percentage complete</span><strong>{progress.percentageComplete}%</strong></div>
       </section>
       <section className="reflections-section">
         <div className="section-heading">
@@ -43,11 +58,42 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
                   <div><dt>Needs practice</dt><dd>{reflection.whatNeedsPractice}</dd></div>
                   {reflection.notesForNextTime && <div><dt>Next time</dt><dd>{reflection.notesForNextTime}</dd></div>}
                 </dl>
+                <div className="reflection-actions">
+                  {plans.find((plan) => plan.lessonReflectionId === reflection.id) ? (
+                    <Link className="text-action" href={`/plans/${plans.find((plan) => plan.lessonReflectionId === reflection.id)!.id}`}>
+                      View weekly plan <ArrowRight size={15} />
+                    </Link>
+                  ) : (
+                    <GeneratePlanButton reflectionId={reflection.id} />
+                  )}
+                </div>
               </article>
             ))}
           </div>
         ) : (
           <div className="empty-state"><h3>No reflections yet</h3><p>Add the first lesson reflection for {student.name}.</p></div>
+        )}
+      </section>
+      <section className="reflections-section">
+        <div className="section-heading">
+          <div><span className="kicker">Weekly plans</span><h2>Practice weeks</h2></div>
+          <span className="muted-label">{plans.length} generated</span>
+        </div>
+        {plans.length ? (
+          <div className="plan-list">
+            {plans.map((plan) => (
+              <Link className="plan-list-card" href={`/plans/${plan.id}`} key={plan.id}>
+                <div><strong>{plan.title}</strong><span>{plan.focus}</span></div>
+                <div className="plan-list-progress">
+                  <span><CheckCircle2 size={14} /> {plan.sessionsCompleted}/{plan.sessionsTotal} sessions</span>
+                  <span>{plan.activitiesCompleted}/{plan.activitiesTotal} activities</span>
+                </div>
+                <ArrowRight size={17} />
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="empty-state"><h3>No weekly plans yet</h3><p>Generate one from a saved lesson reflection.</p></div>
         )}
       </section>
     </main>

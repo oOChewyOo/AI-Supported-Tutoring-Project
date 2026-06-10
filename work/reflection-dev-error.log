@@ -58,3 +58,57 @@
   88 | {
   digest: '3237008641'
 }
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at j (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js:1:4065)
+    at async m (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js:1:8214)
+    at async s (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\students\[id]\page.js:1:1775) {
+  digest: '3920122332'
+}

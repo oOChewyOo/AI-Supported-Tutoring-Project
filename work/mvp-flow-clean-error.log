@@ -1,0 +1,208 @@
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Could not load weekly plans: Could not find the table 'public.weekly_plans' in the schema cache
+    at listWeeklyPlans (lib\data.ts:140:24)
+    at async StudentPage (app\students\[id]\page.tsx:9:51)
+  138 |     .order("created_at", { ascending: false });
+  139 |
+> 140 |   if (planError) throw new Error(`Could not load weekly plans: ${planError.message}`);
+      |                        ^
+  141 |   const plans = (planData ?? []) as WeeklyPlanRow[];
+  142 |   if (!plans.length) return [];
+  143 | {
+  digest: '66550234'
+}
+ ⨯ Error: Cannot find module './527.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\options.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\index.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\next.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js:2:13165)
+    at Object.<anonymous> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js:2:13215) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/dashboard'
+}
+ ⨯ Error: Cannot find module './527.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\options.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\index.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\next.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\plans\[id]\page.js:2:7744)
+    at Object.<anonymous> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\plans\[id]\page.js:2:7798) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a'
+}
+ ⨯ Error: Cannot find module './527.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\options.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\index.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\next.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\page.js:2:13313)
+    at Object.<anonymous> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\page.js:2:13359) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/'
+}
+ ⨯ Error: Cannot find module './527.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\dashboard\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\options.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\swc\index.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\next-config-ts\transpile-config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\config.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\next.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\lib\start-server.js
+    at <unknown> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\activities\[id]\page.js:2:9155)
+    at Object.<anonymous> (C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\activities\[id]\page.js:2:9212) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/activities/f98908f8-484e-4be6-afa3-65e18ac20743'
+}
+ ⨯ Failed to generate static paths for /students/[id]:
+[Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\students\[id]\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Failed to generate static paths for /plans/[id]:
+[Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\plans\[id]\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ Failed to generate static paths for /activities/[id]:
+[Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\activities\[id]\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array]
+}
+ ⨯ [Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\students\[id]\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/students/f374cc2e-f297-4eba-9436-d839e2ef6c92'
+}
+ ⨯ [Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\plans\[id]\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a'
+}
+ ⨯ [Error: Cannot find module './vendor-chunks/@supabase.js'
+Require stack:
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\webpack-runtime.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\.next\server\app\activities\[id]\page.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\require.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\load-components.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\build\utils.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\server\dev\static-paths-worker.js
+- C:\Users\chris\Documents\Codex\2026-06-09\i-want-to-build-an-mvp\node_modules\next\dist\compiled\jest-worker\processChild.js] {
+  type: 'Error',
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [Array],
+  page: '/activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb'
+}

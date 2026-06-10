@@ -39,3 +39,16 @@
  GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92/reflections/new 200 in 1254ms
  GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 308ms
  POST /students/f374cc2e-f297-4eba-9436-d839e2ef6c92/reflections/new 303 in 842ms
+ ✓ Compiled in 2.8s (612 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 1075ms
+ ✓ Compiled in 1865ms (853 modules)
+ ✓ Compiled in 4.4s (863 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 4406ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 727ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 572ms
+ ✓ Compiled in 2.9s (877 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 1523ms
+ ✓ Compiled in 2.3s (863 modules)
+ GET /dashboard 200 in 857ms
+ GET /dashboard 200 in 238ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 327ms
