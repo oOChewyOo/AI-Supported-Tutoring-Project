@@ -1,14 +1,17 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, BookOpenText, Brain, CheckCircle2, Heart, Plus, Target } from "lucide-react";
+import { ExtractObjectivesButton } from "@/components/extract-objectives-button";
 import { GeneratePlanButton } from "@/components/generate-plan-button";
-import { getStudent, getStudentProgress, listLessonReflections, listWeeklyPlans } from "@/lib/data";
+import { ObjectivesEditor } from "@/components/objectives-editor";
+import { getStudent, getStudentProgress, listExtractedObjectives, listLessonReflections, listWeeklyPlans } from "@/lib/data";
 
 export default async function StudentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [student, reflections, plans, progress] = await Promise.all([
+  const [student, reflections, objectives, plans, progress] = await Promise.all([
     getStudent(id),
     listLessonReflections(id),
+    listExtractedObjectives(id),
     listWeeklyPlans(id),
     getStudentProgress(id),
   ]);
@@ -46,8 +49,17 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
         </div>
         {reflections.length ? (
           <div className="reflections-list">
-            {reflections.map((reflection) => (
-              <article className="reflection-card" key={reflection.id}>
+            {reflections.map((reflection) => {
+              const extracted = objectives.find((item) => item.lessonReflectionId === reflection.id);
+              const objectiveGroups = extracted ? [
+                ["Secure objectives", extracted.secureObjectives],
+                ["Developing objectives", extracted.developingObjectives],
+                ["Focus for next week", extracted.focusForNextWeek],
+                ["Possible misconceptions", extracted.possibleMisconceptions],
+                ["Suggested retrieval items", extracted.suggestedRetrievalItems],
+              ] as const : [];
+
+              return <article className="reflection-card" key={reflection.id}>
                 <div className="reflection-card-heading">
                   <strong>{new Date(`${reflection.date}T12:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}</strong>
                   <span>{reflection.whatNeedsPractice}</span>
@@ -58,6 +70,30 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
                   <div><dt>Needs practice</dt><dd>{reflection.whatNeedsPractice}</dd></div>
                   {reflection.notesForNextTime && <div><dt>Next time</dt><dd>{reflection.notesForNextTime}</dd></div>}
                 </dl>
+                <div className="objectives-panel">
+                  <div className="objectives-heading">
+                    <div><span className="kicker">AI extraction</span><h3>Learning objectives</h3></div>
+                    {extracted && <span className="muted-label">Saved</span>}
+                  </div>
+                  {extracted ? (
+                    <>
+                      <div className="objectives-grid">
+                        {objectiveGroups.map(([label, items]) => (
+                          <section key={label}>
+                            <h4>{label}</h4>
+                            {items.length ? <ul>{items.map((item) => <li key={item}>{item}</li>)}</ul> : <p>None identified.</p>}
+                          </section>
+                        ))}
+                      </div>
+                      <ObjectivesEditor objectives={extracted} studentId={student.id} />
+                    </>
+                  ) : (
+                    <div className="objectives-empty">
+                      <p>Extract a structured, editable set of objectives from this saved reflection.</p>
+                      <ExtractObjectivesButton reflectionId={reflection.id} studentId={student.id} />
+                    </div>
+                  )}
+                </div>
                 <div className="reflection-actions">
                   {plans.find((plan) => plan.lessonReflectionId === reflection.id) ? (
                     <Link className="text-action" href={`/plans/${plans.find((plan) => plan.lessonReflectionId === reflection.id)!.id}`}>
@@ -67,8 +103,8 @@ export default async function StudentPage({ params }: { params: Promise<{ id: st
                     <GeneratePlanButton reflectionId={reflection.id} />
                   )}
                 </div>
-              </article>
-            ))}
+              </article>;
+            })}
           </div>
         ) : (
           <div className="empty-state"><h3>No reflections yet</h3><p>Add the first lesson reflection for {student.name}.</p></div>

@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getLessonReflection } from "@/lib/data";
+import { extractObjectivesWithOpenAI } from "@/lib/openai/extract-objectives";
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 
 export type StudentFormState = {
@@ -20,9 +22,21 @@ export type ActivityActionState = {
   error?: string;
 };
 
+export type ObjectiveActionState = {
+  error?: string;
+  success?: string;
+};
+
 function list(value: FormDataEntryValue | null) {
   return String(value ?? "")
     .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function lines(value: FormDataEntryValue | null) {
+  return String(value ?? "")
+    .split(/\r?\n/)
     .map((item) => item.trim())
     .filter(Boolean);
 }
@@ -149,4 +163,76 @@ export async function setActivityCompletionAction(
   revalidatePath(`/plans/${planId}`);
   revalidatePath(`/students/${studentId}`);
   redirect(`/plans/${planId}`);
+}
+
+export async function extractObjectivesAction(
+  reflectionId: string,
+  studentId: string,
+  _previousState: ObjectiveActionState,
+): Promise<ObjectiveActionState> {
+  void _previousState;
+  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
+  if (!process.env.OPENAI_API_KEY) {
+    return { error: "OPENAI_API_KEY is not configured on the server. Add it to .env.local and restart the app." };
+  }
+
+  try {
+    const supabase = createSupabaseServerClient();
+    const { error: tableError } = await supabase.from("extracted_objectives").select("id").limit(1);
+    if (tableError?.code === "PGRST205") {
+      return { error: "Run the extracted objectives Supabase migration before using AI extraction." };
+    }
+    if (tableError) return { error: `Could not access extracted objectives: ${tableError.message}` };
+
+    const reflection = await getLessonReflection(reflectionId);
+    if (!reflection || reflection.studentId !== studentId) {
+      return { error: "The selected lesson reflection could not be found." };
+    }
+
+    const objectives = await extractObjectivesWithOpenAI(reflection);
+    const { error } = await supabase
+      .from("extracted_objectives")
+      .upsert(
+        {
+          student_id: studentId,
+          lesson_reflection_id: reflectionId,
+          ...objectives,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "lesson_reflection_id" },
+      );
+
+    if (error) return { error: `Could not save extracted objectives: ${error.message}` };
+    revalidatePath(`/students/${studentId}`);
+    return { success: "Objectives extracted and saved." };
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Could not extract objectives." };
+  }
+}
+
+export async function updateObjectivesAction(
+  objectiveId: string,
+  studentId: string,
+  _previousState: ObjectiveActionState,
+  formData: FormData,
+): Promise<ObjectiveActionState> {
+  void _previousState;
+  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
+
+  const { error } = await createSupabaseServerClient()
+    .from("extracted_objectives")
+    .update({
+      secure_objectives: lines(formData.get("secure_objectives")),
+      developing_objectives: lines(formData.get("developing_objectives")),
+      focus_for_next_week: lines(formData.get("focus_for_next_week")),
+      possible_misconceptions: lines(formData.get("possible_misconceptions")),
+      suggested_retrieval_items: lines(formData.get("suggested_retrieval_items")),
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", objectiveId)
+    .eq("student_id", studentId);
+
+  if (error) return { error: `Could not update objectives: ${error.message}` };
+  revalidatePath(`/students/${studentId}`);
+  return { success: "Objectives updated." };
 }

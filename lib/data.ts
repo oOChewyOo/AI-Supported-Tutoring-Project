@@ -1,6 +1,7 @@
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
 import {
   ActivityType,
+  ExtractedObjectives,
   LessonReflection,
   PracticeActivity,
   PracticeSession,
@@ -63,6 +64,19 @@ type ActivityResultRow = {
   completed: boolean;
 };
 
+type ExtractedObjectivesRow = {
+  id: string;
+  student_id: string;
+  lesson_reflection_id: string;
+  secure_objectives: string[];
+  developing_objectives: string[];
+  focus_for_next_week: string[];
+  possible_misconceptions: string[];
+  suggested_retrieval_items: string[];
+  created_at: string;
+  updated_at: string;
+};
+
 function toStudent(row: StudentRow): Student {
   return {
     id: row.id,
@@ -85,6 +99,21 @@ function toLessonReflection(row: LessonReflectionRow): LessonReflection {
     whatNeedsPractice: row.what_needs_practice,
     notesForNextTime: row.notes_for_next_time ?? "",
     createdAt: row.created_at,
+  };
+}
+
+function toExtractedObjectives(row: ExtractedObjectivesRow): ExtractedObjectives {
+  return {
+    id: row.id,
+    studentId: row.student_id,
+    lessonReflectionId: row.lesson_reflection_id,
+    secureObjectives: row.secure_objectives,
+    developingObjectives: row.developing_objectives,
+    focusForNextWeek: row.focus_for_next_week,
+    possibleMisconceptions: row.possible_misconceptions,
+    suggestedRetrievalItems: row.suggested_retrieval_items,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
   };
 }
 
@@ -125,6 +154,29 @@ export async function listLessonReflections(studentId: string): Promise<LessonRe
 
   if (error) throw new Error(`Could not load lesson reflections: ${error.message}`);
   return ((data ?? []) as LessonReflectionRow[]).map(toLessonReflection);
+}
+
+export async function getLessonReflection(id: string): Promise<LessonReflection | null> {
+  if (!isSupabaseConfigured()) return null;
+  const { data, error } = await createSupabaseServerClient()
+    .from("lesson_reflections")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(`Could not load lesson reflection: ${error.message}`);
+  return data ? toLessonReflection(data as LessonReflectionRow) : null;
+}
+
+export async function listExtractedObjectives(studentId: string): Promise<ExtractedObjectives[]> {
+  if (!isSupabaseConfigured()) return [];
+  const { data, error } = await createSupabaseServerClient()
+    .from("extracted_objectives")
+    .select("*")
+    .eq("student_id", studentId)
+    .order("updated_at", { ascending: false });
+  if (error?.code === "PGRST205") return [];
+  if (error) throw new Error(`Could not load extracted objectives: ${error.message}`);
+  return ((data ?? []) as ExtractedObjectivesRow[]).map(toExtractedObjectives);
 }
 
 export async function listWeeklyPlans(studentId: string): Promise<WeeklyPlanSummary[]> {

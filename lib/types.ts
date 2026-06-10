@@ -19,6 +19,19 @@ export type LessonReflection = {
   createdAt: string;
 };
 
+export type ExtractedObjectives = {
+  id: string;
+  studentId: string;
+  lessonReflectionId: string;
+  secureObjectives: string[];
+  developingObjectives: string[];
+  focusForNextWeek: string[];
+  possibleMisconceptions: string[];
+  suggestedRetrievalItems: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type ActivityType =
   | "Topic practice"
   | "Retrieval practice"

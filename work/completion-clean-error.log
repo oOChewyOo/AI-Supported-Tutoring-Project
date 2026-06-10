@@ -1,0 +1,12 @@
+ ⨯ Error: Could not load extracted objectives: Could not find the table 'public.extracted_objectives' in the schema cache
+    at listExtractedObjectives (lib\data.ts:177:20)
+    at async StudentPage (app\students\[id]\page.tsx:11:63)
+  175 |     .eq("student_id", studentId)
+  176 |     .order("updated_at", { ascending: false });
+> 177 |   if (error) throw new Error(`Could not load extracted objectives: ${error.message}`);
+      |                    ^
+  178 |   return ((data ?? []) as ExtractedObjectivesRow[]).map(toExtractedObjectives);
+  179 | }
+  180 | {
+  digest: '3762160838'
+}

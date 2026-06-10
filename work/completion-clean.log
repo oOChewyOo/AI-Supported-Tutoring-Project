@@ -14,3 +14,31 @@
  ○ Compiling /activities/[id] ...
  ✓ Compiled /activities/[id] in 932ms (853 modules)
  GET /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 200 in 2449ms
+ ○ Compiling / ...
+ ✓ Compiled / in 1416ms (619 modules)
+ GET / 200 in 2233ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 812ms (684 modules)
+ GET /dashboard 200 in 1919ms
+ ○ Compiling /students/[id] ...
+ ✓ Compiled /students/[id] in 2.2s (604 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 3522ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 528ms
+ ○ Compiling /plans/[id] ...
+ ✓ Compiled /plans/[id] in 1155ms (613 modules)
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 200 in 2097ms
+ ○ Compiling /activities/[id] ...
+ ✓ Compiled /activities/[id] in 739ms (628 modules)
+ GET /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 200 in 1511ms
+ GET /plans/bda758a0-8e6d-46ca-86a9-f3af27b5ed8a 200 in 1075ms
+ POST /activities/b05472f1-85ad-42c2-b92a-dd9a649b96eb 303 in 1487ms
+ GET /activities/2fd0ec5d-0252-4888-a15d-e74eff4ec8d8 200 in 492ms
+ GET /dashboard 200 in 315ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 602ms
+ ✓ Compiled in 2.1s (628 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 721ms
+ ✓ Compiled in 1041ms (878 modules)
+ ✓ Compiled in 640ms (630 modules)
+ ✓ Compiled in 1820ms (902 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 572ms
+[?25h

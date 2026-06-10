@@ -1,0 +1,13 @@
+   ▲ Next.js 15.5.19
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+   - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 2.9s
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 6.3s (666 modules)
+ GET /dashboard 200 in 7279ms
+ ○ Compiling /students/[id] ...
+ ✓ Compiled /students/[id] in 2.8s (847 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 4958ms
