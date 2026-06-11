@@ -4,7 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getLessonReflection } from "@/lib/data";
 import { extractObjectivesWithOpenAI } from "@/lib/openai/extract-objectives";
+import { generateSessionTitlesWithOpenAI } from "@/lib/openai/generate-session-titles";
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { ExtractedObjectives } from "@/lib/types";
 
 export type StudentFormState = {
   error?: string;
@@ -127,11 +129,56 @@ export async function generateWeeklyPlanAction(
   void _previousState;
   if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
 
-  const { data, error } = await createSupabaseServerClient().rpc("generate_placeholder_weekly_plan", {
+  const supabase = createSupabaseServerClient();
+  let generatedTitles: string[] | null = null;
+
+  if (process.env.OPENAI_API_KEY) {
+    const { data: objectives } = await supabase
+      .from("extracted_objectives")
+      .select("*")
+      .eq("lesson_reflection_id", reflectionId)
+      .maybeSingle();
+
+    if (objectives) {
+      try {
+        generatedTitles = await generateSessionTitlesWithOpenAI({
+          id: objectives.id,
+          studentId: objectives.student_id,
+          lessonReflectionId: objectives.lesson_reflection_id,
+          secureObjectives: objectives.secure_objectives,
+          developingObjectives: objectives.developing_objectives,
+          focusForNextWeek: objectives.focus_for_next_week,
+          possibleMisconceptions: objectives.possible_misconceptions,
+          suggestedRetrievalItems: objectives.suggested_retrieval_items,
+          createdAt: objectives.created_at,
+          updatedAt: objectives.updated_at,
+        } satisfies ExtractedObjectives);
+      } catch {
+        // Plan creation must continue with the RPC's placeholder titles.
+        generatedTitles = null;
+      }
+    }
+  }
+
+  const { data, error } = await supabase.rpc("generate_placeholder_weekly_plan", {
     p_reflection_id: reflectionId,
   });
 
   if (error) return { error: `Could not generate weekly plan: ${error.message}` };
+
+  if (generatedTitles) {
+    // Title updates are best-effort so a policy or network problem cannot block the plan.
+    await Promise.all(
+      generatedTitles.map((title, index) =>
+        supabase
+          .from("weekly_sessions")
+          .update({ title })
+          .eq("weekly_plan_id", data)
+          .eq("session_number", index + 1),
+      ),
+    );
+  }
+
   redirect(`/plans/${data}`);
 }
 

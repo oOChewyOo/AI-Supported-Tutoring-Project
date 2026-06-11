@@ -147,6 +147,8 @@ drop policy if exists "Public can read weekly sessions during no-auth MVP" on pu
 create policy "Public can read weekly sessions during no-auth MVP" on public.weekly_sessions for select to anon using (true);
 drop policy if exists "Public can create weekly sessions during no-auth MVP" on public.weekly_sessions;
 create policy "Public can create weekly sessions during no-auth MVP" on public.weekly_sessions for insert to anon with check (true);
+drop policy if exists "Public can update weekly session titles during no-auth MVP" on public.weekly_sessions;
+create policy "Public can update weekly session titles during no-auth MVP" on public.weekly_sessions for update to anon using (true) with check (true);
 
 drop policy if exists "Public can read activities during no-auth MVP" on public.activities;
 create policy "Public can read activities during no-auth MVP" on public.activities for select to anon using (true);

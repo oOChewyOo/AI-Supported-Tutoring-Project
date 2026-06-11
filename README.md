@@ -21,6 +21,7 @@ Open `http://localhost:3000`.
 6. Generate a placeholder five-session weekly plan from a reflection.
 7. Open activities and persist completion.
 8. Extract structured learning objectives from a saved reflection and edit them.
+9. Generate objective-specific weekly session titles, with automatic placeholder fallback.
 
 ## Supabase setup
 
@@ -37,3 +38,4 @@ For an existing project that already has students, run migrations in order:
 1. `supabase/migrations/202606100002_lesson_reflections.sql`
 2. `supabase/migrations/202606100003_weekly_plans_and_activities.sql`
 3. `supabase/migrations/202606100004_extracted_objectives.sql`
+4. `supabase/migrations/202606110001_ai_session_titles.sql`

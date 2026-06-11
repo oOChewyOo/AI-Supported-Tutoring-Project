@@ -11,3 +11,14 @@
  ○ Compiling /students/[id] ...
  ✓ Compiled /students/[id] in 2.8s (847 modules)
  GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 4958ms
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 883ms
+ POST /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 1462ms
+   Reload env: .env.local
+ ✓ Compiled in 1104ms (832 modules)
+ GET /students/f374cc2e-f297-4eba-9436-d839e2ef6c92 200 in 916ms
+ ○ Compiling / ...
+ ✓ Compiled / in 4.4s (840 modules)
+ GET / 200 in 6124ms
+ GET / 200 in 149ms
+ ✓ Compiled in 1825ms (834 modules)
+[?25h
