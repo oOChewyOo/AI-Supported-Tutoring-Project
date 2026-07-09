@@ -1,4 +1,5 @@
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { isGeneratedActivityContent } from "@/lib/activity-templates";
 import {
   ActivityType,
   ExtractedObjectives,
@@ -55,8 +56,11 @@ type ActivityRow = {
   position: number;
   title: string;
   description: string;
+  // This currently stores the activity's session role, not a template's educational activity type.
   activity_type: ActivityType;
   minutes: number;
+  template_id: string | null;
+  content_json: unknown;
 };
 
 type ActivityResultRow = {
@@ -308,6 +312,8 @@ export async function getWeeklyPlan(id: string): Promise<WeeklyPlan | null> {
           type: activity.activity_type,
           minutes: activity.minutes,
           completed: completedIds.has(activity.id),
+          templateId: activity.template_id ?? null,
+          contentJson: isGeneratedActivityContent(activity.content_json) ? activity.content_json : null,
         }));
       return {
         id: session.id,
@@ -370,6 +376,8 @@ export async function getActivity(id: string) {
       type: activity.activity_type,
       minutes: activity.minutes,
       completed: Boolean(resultResult.data?.completed),
+      templateId: activity.template_id ?? null,
+      contentJson: isGeneratedActivityContent(activity.content_json) ? activity.content_json : null,
     } satisfies PracticeActivity,
     session: {
       id: session.id,

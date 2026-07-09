@@ -112,8 +112,11 @@ create table if not exists public.activities (
   position smallint not null check (position between 1 and 3),
   title text not null,
   description text not null,
+  -- activity_type currently stores the activity's weekly-session role, not its educational template type.
   activity_type text not null,
   minutes smallint not null default 5 check (minutes > 0),
+  template_id text,
+  content_json jsonb,
   created_at timestamptz not null default now(),
   unique (weekly_session_id, position)
 );

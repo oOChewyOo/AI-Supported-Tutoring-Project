@@ -68,6 +68,92 @@ export interface ActivityTemplate {
   example_activity: ExampleActivity;
 }
 
+export interface ActivityQuestion {
+  prompt: string;
+  answer?: string;
+}
+
+export interface QuestionSetPayload {
+  questions: readonly ActivityQuestion[];
+}
+
+export interface WordListPayload {
+  words: readonly string[];
+}
+
+export interface MatchingPairsPayload {
+  pairs: readonly {
+    left: string;
+    right: string;
+  }[];
+}
+
+export interface SortingGroupsPayload {
+  groups: readonly {
+    label: string;
+    items: readonly string[];
+  }[];
+}
+
+export interface SentenceSetPayload {
+  sentences: readonly string[];
+}
+
+export interface WorkedExampleAndQuestionsPayload {
+  worked_example: {
+    steps: readonly string[];
+    answer?: string;
+  };
+  questions: readonly ActivityQuestion[];
+}
+
+export interface PracticalTaskPayload {
+  resources: readonly string[];
+  steps: readonly string[];
+  questions: readonly ActivityQuestion[];
+}
+
+export interface TimedQuestionSetPayload {
+  time_limit_seconds: number;
+  questions: readonly ActivityQuestion[];
+}
+
+export type ActivityPayload =
+  | QuestionSetPayload
+  | WordListPayload
+  | MatchingPairsPayload
+  | SortingGroupsPayload
+  | SentenceSetPayload
+  | WorkedExampleAndQuestionsPayload
+  | PracticalTaskPayload
+  | TimedQuestionSetPayload;
+
+type GeneratedActivityContentFor<
+  OutputFormat extends ActivityOutputFormat,
+  Payload extends ActivityPayload,
+> = {
+  schema_version: 1;
+  output_format: OutputFormat;
+  instructions: string;
+  delivery_method: DeliveryMethod;
+  payload: Payload;
+};
+
+/**
+ * Structured content stored for a generated activity. The top-level
+ * `output_format` discriminates the payload shape so future generation and
+ * rendering code can validate content before using it.
+ */
+export type GeneratedActivityContent =
+  | GeneratedActivityContentFor<"question_set", QuestionSetPayload>
+  | GeneratedActivityContentFor<"word_list", WordListPayload>
+  | GeneratedActivityContentFor<"matching_pairs", MatchingPairsPayload>
+  | GeneratedActivityContentFor<"sorting_groups", SortingGroupsPayload>
+  | GeneratedActivityContentFor<"sentence_set", SentenceSetPayload>
+  | GeneratedActivityContentFor<"worked_example_and_questions", WorkedExampleAndQuestionsPayload>
+  | GeneratedActivityContentFor<"practical_task", PracticalTaskPayload>
+  | GeneratedActivityContentFor<"timed_question_set", TimedQuestionSetPayload>;
+
 export interface CrossSubjectActivityType {
   activity_type: string;
   reusable_in: readonly SubjectArea[];
@@ -709,3 +795,93 @@ export const CROSS_SUBJECT_ACTIVITY_TYPES = [
   },
 ] as const satisfies readonly CrossSubjectActivityType[];
 
+export function getActivityTemplateById(templateId: string): ActivityTemplate | undefined {
+  return ACTIVITY_TEMPLATES.find((template) => template.template_id === templateId);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every((item) => typeof item === "string");
+}
+
+function isActivityQuestion(value: unknown): value is ActivityQuestion {
+  return (
+    isRecord(value) &&
+    typeof value.prompt === "string" &&
+    (value.answer === undefined || typeof value.answer === "string")
+  );
+}
+
+function isActivityQuestionArray(value: unknown): value is ActivityQuestion[] {
+  return Array.isArray(value) && value.every(isActivityQuestion);
+}
+
+function hasValidCommonContent(value: Record<string, unknown>): boolean {
+  return (
+    value.schema_version === 1 &&
+    typeof value.instructions === "string" &&
+    typeof value.delivery_method === "string" &&
+    DELIVERY_METHODS.some((method) => method === value.delivery_method) &&
+    isRecord(value.payload)
+  );
+}
+
+/**
+ * Validates unknown JSON read from storage before it reaches future activity
+ * renderers. Invalid or unsupported content can safely fall back to the
+ * existing title and description UI.
+ */
+export function isGeneratedActivityContent(value: unknown): value is GeneratedActivityContent {
+  if (!isRecord(value) || !hasValidCommonContent(value)) return false;
+
+  const payload = value.payload;
+  if (!isRecord(payload)) return false;
+
+  switch (value.output_format) {
+    case "question_set":
+      return isActivityQuestionArray(payload.questions);
+    case "word_list":
+      return isStringArray(payload.words);
+    case "matching_pairs":
+      return (
+        Array.isArray(payload.pairs) &&
+        payload.pairs.every(
+          (pair) => isRecord(pair) && typeof pair.left === "string" && typeof pair.right === "string",
+        )
+      );
+    case "sorting_groups":
+      return (
+        Array.isArray(payload.groups) &&
+        payload.groups.every(
+          (group) => isRecord(group) && typeof group.label === "string" && isStringArray(group.items),
+        )
+      );
+    case "sentence_set":
+      return isStringArray(payload.sentences);
+    case "worked_example_and_questions":
+      return (
+        isRecord(payload.worked_example) &&
+        isStringArray(payload.worked_example.steps) &&
+        (payload.worked_example.answer === undefined || typeof payload.worked_example.answer === "string") &&
+        isActivityQuestionArray(payload.questions)
+      );
+    case "practical_task":
+      return (
+        isStringArray(payload.resources) &&
+        isStringArray(payload.steps) &&
+        isActivityQuestionArray(payload.questions)
+      );
+    case "timed_question_set":
+      return (
+        typeof payload.time_limit_seconds === "number" &&
+        Number.isFinite(payload.time_limit_seconds) &&
+        payload.time_limit_seconds > 0 &&
+        isActivityQuestionArray(payload.questions)
+      );
+    default:
+      return false;
+  }
+}

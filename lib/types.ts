@@ -1,3 +1,5 @@
+import type { GeneratedActivityContent } from "@/lib/activity-templates";
+
 export type Student = {
   id: string;
   name: string;
@@ -32,6 +34,10 @@ export type ExtractedObjectives = {
   updatedAt: string;
 };
 
+/**
+ * This currently describes an activity's role within a weekly session, not
+ * the educational activity type defined by an activity template.
+ */
 export type ActivityType =
   | "Topic practice"
   | "Retrieval practice"
@@ -44,6 +50,8 @@ export type PracticeActivity = {
   minutes: number;
   description: string;
   completed: boolean;
+  templateId: string | null;
+  contentJson: GeneratedActivityContent | null;
 };
 
 export type PracticeSession = {
