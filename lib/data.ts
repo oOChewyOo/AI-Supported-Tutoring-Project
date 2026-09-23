@@ -1,4 +1,5 @@
-import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import "server-only";
+import { requireTutor } from "@/lib/auth";
 import { isGeneratedActivityContent } from "@/lib/activity-templates";
 import {
   ActivityType,
@@ -122,9 +123,9 @@ function toExtractedObjectives(row: ExtractedObjectivesRow): ExtractedObjectives
 }
 
 export async function listStudents(): Promise<Student[]> {
-  if (!isSupabaseConfigured()) return [];
+  const { supabase } = await requireTutor();
 
-  const { data, error } = await createSupabaseServerClient()
+  const { data, error } = await supabase
     .from("students")
     .select("*")
     .order("name");
@@ -134,9 +135,9 @@ export async function listStudents(): Promise<Student[]> {
 }
 
 export async function getStudent(id: string): Promise<Student | null> {
-  if (!isSupabaseConfigured()) return null;
+  const { supabase } = await requireTutor();
 
-  const { data, error } = await createSupabaseServerClient()
+  const { data, error } = await supabase
     .from("students")
     .select("*")
     .eq("id", id)
@@ -147,9 +148,9 @@ export async function getStudent(id: string): Promise<Student | null> {
 }
 
 export async function listLessonReflections(studentId: string): Promise<LessonReflection[]> {
-  if (!isSupabaseConfigured()) return [];
+  const { supabase } = await requireTutor();
 
-  const { data, error } = await createSupabaseServerClient()
+  const { data, error } = await supabase
     .from("lesson_reflections")
     .select("*")
     .eq("student_id", studentId)
@@ -161,8 +162,8 @@ export async function listLessonReflections(studentId: string): Promise<LessonRe
 }
 
 export async function getLessonReflection(id: string): Promise<LessonReflection | null> {
-  if (!isSupabaseConfigured()) return null;
-  const { data, error } = await createSupabaseServerClient()
+  const { supabase } = await requireTutor();
+  const { data, error } = await supabase
     .from("lesson_reflections")
     .select("*")
     .eq("id", id)
@@ -172,8 +173,8 @@ export async function getLessonReflection(id: string): Promise<LessonReflection 
 }
 
 export async function listExtractedObjectives(studentId: string): Promise<ExtractedObjectives[]> {
-  if (!isSupabaseConfigured()) return [];
-  const { data, error } = await createSupabaseServerClient()
+  const { supabase } = await requireTutor();
+  const { data, error } = await supabase
     .from("extracted_objectives")
     .select("*")
     .eq("student_id", studentId)
@@ -184,9 +185,8 @@ export async function listExtractedObjectives(studentId: string): Promise<Extrac
 }
 
 export async function listWeeklyPlans(studentId: string): Promise<WeeklyPlanSummary[]> {
-  if (!isSupabaseConfigured()) return [];
+  const { supabase } = await requireTutor();
 
-  const supabase = createSupabaseServerClient();
   const { data: planData, error: planError } = await supabase
     .from("weekly_plans")
     .select("*")
@@ -251,9 +251,8 @@ export async function listWeeklyPlans(studentId: string): Promise<WeeklyPlanSumm
 }
 
 export async function getWeeklyPlan(id: string): Promise<WeeklyPlan | null> {
-  if (!isSupabaseConfigured()) return null;
+  const { supabase } = await requireTutor();
 
-  const supabase = createSupabaseServerClient();
   const { data: planData, error: planError } = await supabase
     .from("weekly_plans")
     .select("*")
@@ -328,9 +327,8 @@ export async function getWeeklyPlan(id: string): Promise<WeeklyPlan | null> {
 }
 
 export async function getActivity(id: string) {
-  if (!isSupabaseConfigured()) return null;
+  const { supabase } = await requireTutor();
 
-  const supabase = createSupabaseServerClient();
   const { data: activityData, error: activityError } = await supabase
     .from("activities")
     .select("*")

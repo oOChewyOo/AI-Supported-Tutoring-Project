@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { StudentForm } from "@/components/student-form";
 import { isSupabaseConfigured } from "@/lib/supabase/server";
+import { requireTutor } from "@/lib/auth";
 
-export default function NewStudentPage() {
+export default async function NewStudentPage() {
+  await requireTutor();
   const configured = isSupabaseConfigured();
 
   return (

@@ -14,6 +14,10 @@
 }
 
 * { box-sizing: border-box; }
+.auth-form { display: grid; gap: 20px; max-width: 420px; margin: 28px 0; }
+.auth-form label { display: grid; gap: 8px; font-weight: 600; }
+.auth-form input { width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 7px; }
+.auth-form :is(input, button):focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
 html { scroll-behavior: smooth; }
 body { margin: 0; color: var(--ink); background: var(--paper); font-family: var(--font-sans), sans-serif; }
 a { color: inherit; text-decoration: none; }
@@ -126,7 +130,7 @@ button { color: inherit; }
 .integration-note { max-width: 850px; margin-top: 30px; padding: 18px; color: var(--muted); background: var(--orange-soft); border-radius: 7px; font-size: 11px; line-height: 1.6; }.integration-note strong { color: var(--ink); }.integration-note p { margin: 3px 0 0; }
 
 @media (max-width: 800px) {
-  .main-nav > a:first-child { display: none; }
+  .main-nav .nav-dashboard, .main-nav .nav-add-student { display: none; }
   .hero { padding-top: 70px; }.hero h1 { font-size: 55px; }.hero-proof { width: 100%; }.hero-proof div { width: 33.33%; padding-inline: 8px; }
   .steps-grid, .student-grid, .stat-grid, .stat-grid-two, .profile-grid { grid-template-columns: 1fr; }
   .promise-panel, .dashboard-heading, .profile-hero, .plan-heading, .recent-panel { align-items: flex-start; flex-direction: column; }

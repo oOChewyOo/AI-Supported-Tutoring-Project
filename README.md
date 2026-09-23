@@ -13,7 +13,7 @@ Open `http://localhost:3000`.
 
 ## Implemented flow
 
-1. Open the tutor dashboard.
+1. Sign in with an administrator-provisioned tutor account and open the tutor dashboard.
 2. Add a student.
 3. See the persisted student on the dashboard.
 4. Open the student profile.
@@ -25,24 +25,18 @@ Open `http://localhost:3000`.
 
 ## Supabase setup
 
-1. Create a Supabase project.
-2. Run `supabase/schema.sql` in the Supabase SQL editor.
-3. Copy `.env.example` to `.env.local` and add the project URL and anon key.
-4. Add `OPENAI_API_KEY` to `.env.local`. It is server-only and must not use a `NEXT_PUBLIC_` prefix.
-5. Restart the development server.
+Read [the authentication audit and manual migration plan](docs/tutor-auth-security.md)
+before connecting a database. `supabase/schema.sql` is a historical insecure
+snapshot, not the current setup procedure. Apply the complete ordered migration
+history only after review, provision approved tutor accounts, then configure the
+public Supabase URL/anon key in `.env.local`. Never configure a service-role key
+for tutor requests. `OPENAI_API_KEY` is optional and server-only.
 
-The complete non-AI MVP flow is implemented: students, lesson reflections, placeholder weekly plans, activities, and persisted completion. The schema includes temporary anonymous policies because authentication is intentionally out of scope. Replace them with tutor-owned policies before deploying for real users.
+Existing records are quarantined with NULL ownership until an administrator
+reviews them; signing in never claims old records. Use synthetic test data only.
+No live migration or deployment is performed by the tests.
 
-For an existing project that already has students, run migrations in order:
+The independent [Resource Studio development preview](docs/resource-studio-preview.md)
+remains available without tutor sign-in and does not access learner records.
 
-1. `supabase/migrations/202606100002_lesson_reflections.sql`
-2. `supabase/migrations/202606100003_weekly_plans_and_activities.sql`
-3. `supabase/migrations/202606100004_extracted_objectives.sql`
-4. `supabase/migrations/202606110001_ai_session_titles.sql`
-
-## Resource Studio development preview
-
-See [local preview setup and checks](docs/resource-studio-preview.md). The preview
-is development-only, uses server-only credentials, and does not save learner data.
-
-Checks: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
+Checks: `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.

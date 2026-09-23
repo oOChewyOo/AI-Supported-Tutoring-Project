@@ -1,5 +1,7 @@
--- Complete non-AI Practice Loop MVP schema.
--- Run this in the Supabase SQL editor for a new project.
+-- HISTORICAL no-auth MVP snapshot, retained for reference only.
+-- DO NOT use this file alone or rerun it after the security cutover.
+-- New installs: apply ALL migrations in order, including 202609220001_tutor_auth_ownership.sql.
+-- See docs/tutor-auth-security.md for the reviewed manual rollout and legacy-data plan.
 
 create extension if not exists pgcrypto;
 

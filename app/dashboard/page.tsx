@@ -14,8 +14,8 @@ export default async function DashboardPage() {
     <main className="page-shell">
       <div className="dashboard-heading">
         <div>
-          <span className="kicker">Tuesday, 9 June</span>
-          <h1>Good evening, Alex.</h1>
+          <span className="kicker">Your practice loops</span>
+          <h1>Tutor dashboard</h1>
           <p>Here&apos;s what&apos;s happening across your students this week.</p>
         </div>
         <div className="heading-actions">

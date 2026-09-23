@@ -2,10 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getLessonReflection } from "@/lib/data";
+import { getActivity, getLessonReflection } from "@/lib/data";
 import { extractObjectivesWithOpenAI } from "@/lib/openai/extract-objectives";
 import { generateSessionTitlesWithOpenAI } from "@/lib/openai/generate-session-titles";
-import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { requireTutor } from "@/lib/auth";
 import { ExtractedObjectives } from "@/lib/types";
 
 export type StudentFormState = {
@@ -47,9 +47,7 @@ export async function createStudentAction(
   _previousState: StudentFormState,
   formData: FormData,
 ): Promise<StudentFormState> {
-  if (!isSupabaseConfigured()) {
-    return { error: "Supabase is not configured. Add the required variables to .env.local and restart the app." };
-  }
+  const { supabase, user } = await requireTutor();
 
   const name = String(formData.get("name") ?? "").trim();
   const yearGroup = String(formData.get("year_group") ?? "").trim();
@@ -59,9 +57,10 @@ export async function createStudentAction(
     return { error: "Name, year group, and subject focus are required." };
   }
 
-  const { data, error } = await createSupabaseServerClient()
+  const { data, error } = await supabase
     .from("students")
     .insert({
+      owner_tutor_id: user.id,
       name,
       year_group: yearGroup,
       subject_focus: subjectFocus,
@@ -72,7 +71,7 @@ export async function createStudentAction(
     .select("id")
     .single();
 
-  if (error) return { error: `Could not save student: ${error.message}` };
+  if (error) return { error: "Could not save student. Please try again or check your tutor access." };
 
   revalidatePath("/dashboard");
   redirect(`/students/${data.id}`);
@@ -83,9 +82,7 @@ export async function createLessonReflectionAction(
   _previousState: LessonReflectionFormState,
   formData: FormData,
 ): Promise<LessonReflectionFormState> {
-  if (!isSupabaseConfigured()) {
-    return { error: "Supabase is not configured. Add the required variables to .env.local and restart the app." };
-  }
+  const { supabase } = await requireTutor();
 
   const reflectionDate = String(formData.get("date") ?? "").trim();
   const whatWeCovered = String(formData.get("what_we_covered") ?? "").trim();
@@ -97,14 +94,13 @@ export async function createLessonReflectionAction(
     return { error: "Date, what we covered, what went well, and what needs practice are required." };
   }
 
-  const supabase = createSupabaseServerClient();
   const { data: student, error: studentError } = await supabase
     .from("students")
     .select("id")
     .eq("id", studentId)
     .maybeSingle();
 
-  if (studentError) return { error: `Could not verify student: ${studentError.message}` };
+  if (studentError) return { error: "Could not verify student. Please try again or check your tutor access." };
   if (!student) return { error: "The selected student could not be found." };
 
   const { error } = await supabase.from("lesson_reflections").insert({
@@ -116,7 +112,7 @@ export async function createLessonReflectionAction(
     notes_for_next_time: notesForNextTime || null,
   });
 
-  if (error) return { error: `Could not save lesson reflection: ${error.message}` };
+  if (error) return { error: "Could not save lesson reflection. Please try again or check your tutor access." };
 
   revalidatePath(`/students/${studentId}`);
   redirect(`/students/${studentId}`);
@@ -126,10 +122,11 @@ export async function generateWeeklyPlanAction(
   reflectionId: string,
   _previousState: PlanActionState,
 ): Promise<PlanActionState> {
+  const { supabase } = await requireTutor();
   void _previousState;
-  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
 
-  const supabase = createSupabaseServerClient();
+  const reflection = await getLessonReflection(reflectionId);
+  if (!reflection) return { error: "The selected lesson reflection could not be found." };
   let generatedTitles: string[] | null = null;
 
   if (process.env.OPENAI_API_KEY) {
@@ -164,7 +161,7 @@ export async function generateWeeklyPlanAction(
     p_reflection_id: reflectionId,
   });
 
-  if (error) return { error: `Could not generate weekly plan: ${error.message}` };
+  if (error) return { error: "Could not generate weekly plan. Please try again or check your tutor access." };
 
   if (generatedTitles) {
     // Title updates are best-effort so a policy or network problem cannot block the plan.
@@ -189,10 +186,14 @@ export async function setActivityCompletionAction(
   completed: boolean,
   _previousState: ActivityActionState,
 ): Promise<ActivityActionState> {
+  const { supabase } = await requireTutor();
   void _previousState;
-  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
 
-  const { error } = await createSupabaseServerClient()
+  const activity = await getActivity(activityId);
+  if (!activity || activity.student.id !== studentId || activity.planId !== planId) {
+    return { error: "The selected activity could not be found." };
+  }
+  const { error } = await supabase
     .from("activity_results")
     .upsert(
       {
@@ -204,7 +205,7 @@ export async function setActivityCompletionAction(
       { onConflict: "activity_id,student_id" },
     );
 
-  if (error) return { error: `Could not update completion: ${error.message}` };
+  if (error) return { error: "Could not update completion. Please try again or check your tutor access." };
 
   revalidatePath(`/activities/${activityId}`);
   revalidatePath(`/plans/${planId}`);
@@ -217,19 +218,18 @@ export async function extractObjectivesAction(
   studentId: string,
   _previousState: ObjectiveActionState,
 ): Promise<ObjectiveActionState> {
+  const { supabase } = await requireTutor();
   void _previousState;
-  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
   if (!process.env.OPENAI_API_KEY) {
     return { error: "OPENAI_API_KEY is not configured on the server. Add it to .env.local and restart the app." };
   }
 
   try {
-    const supabase = createSupabaseServerClient();
     const { error: tableError } = await supabase.from("extracted_objectives").select("id").limit(1);
     if (tableError?.code === "PGRST205") {
       return { error: "Run the extracted objectives Supabase migration before using AI extraction." };
     }
-    if (tableError) return { error: `Could not access extracted objectives: ${tableError.message}` };
+    if (tableError) return { error: "Could not access extracted objectives. Please try again or check your tutor access." };
 
     const reflection = await getLessonReflection(reflectionId);
     if (!reflection || reflection.studentId !== studentId) {
@@ -249,11 +249,11 @@ export async function extractObjectivesAction(
         { onConflict: "lesson_reflection_id" },
       );
 
-    if (error) return { error: `Could not save extracted objectives: ${error.message}` };
+    if (error) return { error: "Could not save extracted objectives. Please try again or check your tutor access." };
     revalidatePath(`/students/${studentId}`);
     return { success: "Objectives extracted and saved." };
-  } catch (error) {
-    return { error: error instanceof Error ? error.message : "Could not extract objectives." };
+  } catch {
+    return { error: "Could not extract objectives. Please try again or check your tutor access." };
   }
 }
 
@@ -263,10 +263,10 @@ export async function updateObjectivesAction(
   _previousState: ObjectiveActionState,
   formData: FormData,
 ): Promise<ObjectiveActionState> {
+  const { supabase } = await requireTutor();
   void _previousState;
-  if (!isSupabaseConfigured()) return { error: "Supabase is not configured." };
 
-  const { error } = await createSupabaseServerClient()
+  const { data: updated, error } = await supabase
     .from("extracted_objectives")
     .update({
       secure_objectives: lines(formData.get("secure_objectives")),
@@ -277,9 +277,12 @@ export async function updateObjectivesAction(
       updated_at: new Date().toISOString(),
     })
     .eq("id", objectiveId)
-    .eq("student_id", studentId);
+    .eq("student_id", studentId)
+    .select("id")
+    .maybeSingle();
 
-  if (error) return { error: `Could not update objectives: ${error.message}` };
+  if (error) return { error: "Could not update objectives. Please try again or check your tutor access." };
+  if (!updated) return { error: "The selected objectives could not be found." };
   revalidatePath(`/students/${studentId}`);
   return { success: "Objectives updated." };
 }
