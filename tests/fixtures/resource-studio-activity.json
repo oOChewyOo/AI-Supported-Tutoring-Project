@@ -1,0 +1,243 @@
+{
+  "id": "activity-equivalent-fractions-mcq",
+  "title": "Equivalent fractions check",
+  "contentVersion": 1,
+  "activityData": {
+    "schemaVersion": "1.0",
+    "title": "Equivalent fractions check",
+    "instructions": "Choose the best answer for each question. Use the hint if you need a nudge.",
+    "subject": "Maths",
+    "yearGroup": "Year 4",
+    "objectiveId": "objective-equivalent-fractions",
+    "purpose": "Guided practice",
+    "estimatedMinutes": 12,
+    "difficulty": "medium",
+    "feedback": {
+      "generalCorrect": "You are matching fractions by their value, not just by how they look.",
+      "generalIncorrect": "Check whether the fractions describe the same sized part of the same whole."
+    },
+    "accessibility": {
+      "keyboardOperable": true,
+      "noHoverOnly": true,
+      "largeTouchTargets": true,
+      "supportsReducedMotion": true
+    },
+    "teacherNotes": "This activity deliberately moves from conceptual recognition to symbolic reasoning.",
+    "tags": [],
+    "designRulesVersion": "1.0",
+    "introductoryMedia": [
+      {
+        "id": "media-equivalent-bars-intro",
+        "type": "image",
+        "source": "original",
+        "url": "/media/equivalent-fractions-halves-quarters.svg",
+        "altText": "Two fraction bars show that one half and two quarters shade the same amount.",
+        "caption": "One half and two quarters can represent the same amount of the same whole.",
+        "attribution": "Original Resource Studio asset",
+        "licence": "Original Resource Studio demonstration asset",
+        "width": 640,
+        "height": 260,
+        "decorative": false
+      }
+    ],
+    "activityType": "multiple_choice",
+    "content": {
+      "questions": [
+        {
+          "id": "q1",
+          "prompt": "A bar is split into 2 equal parts and 1 part is shaded. Which fraction shows the same amount?",
+          "supportingText": "Think about the same whole being divided into more equal parts.",
+          "media": [
+            {
+              "id": "media-q1-half-bar",
+              "type": "image",
+              "source": "original",
+              "url": "/media/equivalent-fractions-halves-quarters.svg",
+              "altText": "A visual comparison shows one half has the same shaded length as two quarters.",
+              "caption": "Compare the shaded part in each bar.",
+              "attribution": "Original Resource Studio asset",
+              "licence": "Original Resource Studio demonstration asset",
+              "width": 640,
+              "height": 260,
+              "decorative": false
+            }
+          ],
+          "options": [
+            {
+              "id": "q1-a",
+              "text": "2/4",
+              "media": [
+                {
+                  "id": "media-q1-option-2-4",
+                  "type": "image",
+                  "source": "original",
+                  "url": "/media/equivalent-fractions-halves-quarters.svg",
+                  "altText": "The two quarters option shows two out of four equal parts shaded.",
+                  "caption": "Two quarters",
+                  "attribution": "Original Resource Studio asset",
+                  "licence": "Original Resource Studio demonstration asset",
+                  "width": 640,
+                  "height": 260,
+                  "decorative": false
+                }
+              ]
+            },
+            {
+              "id": "q1-b",
+              "text": "1/4",
+              "media": []
+            },
+            {
+              "id": "q1-c",
+              "text": "3/4",
+              "media": []
+            }
+          ],
+          "correctOptionIds": [
+            "q1-a"
+          ],
+          "hint": "One half is the same as two out of four equal parts.",
+          "correctFeedback": "Yes. If each half is split into two, one half becomes two quarters.",
+          "incorrectFeedback": "Not quite. Compare the amount shaded, not just the denominator.",
+          "misconceptionTag": "larger denominator means larger amount",
+          "explanation": "1/2 and 2/4 cover the same amount of the whole."
+        },
+        {
+          "id": "q2",
+          "prompt": "Which fraction is equivalent to 3/6?",
+          "supportingText": "",
+          "media": [],
+          "options": [
+            {
+              "id": "q2-a",
+              "text": "1/2",
+              "media": []
+            },
+            {
+              "id": "q2-b",
+              "text": "1/3",
+              "media": []
+            },
+            {
+              "id": "q2-c",
+              "text": "3/4",
+              "media": []
+            }
+          ],
+          "correctOptionIds": [
+            "q2-a"
+          ],
+          "hint": "Three is half of six.",
+          "correctFeedback": "Correct. 3 out of 6 equal parts is half of the whole.",
+          "incorrectFeedback": "Look at the relationship between the numerator and denominator in 3/6.",
+          "misconceptionTag": "comparing numerators only",
+          "explanation": "3/6 simplifies to 1/2 because both numbers can be divided by 3."
+        },
+        {
+          "id": "q3",
+          "prompt": "Which two fractions are equivalent to 2/3?",
+          "supportingText": "There may be more than one correct answer.",
+          "media": [],
+          "options": [
+            {
+              "id": "q3-a",
+              "text": "4/6",
+              "media": []
+            },
+            {
+              "id": "q3-b",
+              "text": "6/9",
+              "media": []
+            },
+            {
+              "id": "q3-c",
+              "text": "2/6",
+              "media": []
+            },
+            {
+              "id": "q3-d",
+              "text": "3/2",
+              "media": []
+            }
+          ],
+          "correctOptionIds": [
+            "q3-a",
+            "q3-b"
+          ],
+          "hint": "Multiply the numerator and denominator by the same number.",
+          "correctFeedback": "Good reasoning. 2/3 can become 4/6 or 6/9 by scaling both parts equally.",
+          "incorrectFeedback": "Equivalent fractions need the numerator and denominator changed by the same factor.",
+          "misconceptionTag": "changing one part only",
+          "explanation": "2/3 x 2/2 = 4/6 and 2/3 x 3/3 = 6/9."
+        },
+        {
+          "id": "q4",
+          "prompt": "Complete the equivalent fraction: 4/5 = ?/10",
+          "supportingText": "",
+          "media": [],
+          "options": [
+            {
+              "id": "q4-a",
+              "text": "6",
+              "media": []
+            },
+            {
+              "id": "q4-b",
+              "text": "8",
+              "media": []
+            },
+            {
+              "id": "q4-c",
+              "text": "9",
+              "media": []
+            },
+            {
+              "id": "q4-d",
+              "text": "10",
+              "media": []
+            }
+          ],
+          "correctOptionIds": [
+            "q4-b"
+          ],
+          "hint": "The denominator has been multiplied by 2.",
+          "correctFeedback": "Yes. If 5 is multiplied by 2 to make 10, 4 must also be multiplied by 2.",
+          "incorrectFeedback": "Use the same multiplier for the numerator as for the denominator.",
+          "misconceptionTag": "not applying same multiplier",
+          "explanation": "4 x 2 = 8, so 4/5 is equivalent to 8/10."
+        },
+        {
+          "id": "q5",
+          "prompt": "Sam says 3/4 is equivalent to 6/12 because both numbers got bigger. What should you say?",
+          "supportingText": "",
+          "media": [],
+          "options": [
+            {
+              "id": "q5-a",
+              "text": "Sam is correct because bigger numbers always make an equivalent fraction.",
+              "media": []
+            },
+            {
+              "id": "q5-b",
+              "text": "Sam is incorrect because 3 and 4 were not multiplied by the same number.",
+              "media": []
+            },
+            {
+              "id": "q5-c",
+              "text": "Sam is correct because 6/12 is more than 3/4.",
+              "media": []
+            }
+          ],
+          "correctOptionIds": [
+            "q5-b"
+          ],
+          "hint": "Check the multiplier from 3 to 6 and from 4 to 12.",
+          "correctFeedback": "Exactly. 3 was doubled, but 4 was tripled, so the fractions are not equivalent.",
+          "incorrectFeedback": "Equivalent fractions must scale the numerator and denominator by the same factor.",
+          "misconceptionTag": "bigger numbers mean equivalent",
+          "explanation": "3/4 would become 6/8 if both parts were multiplied by 2."
+        }
+      ]
+    }
+  }
+}

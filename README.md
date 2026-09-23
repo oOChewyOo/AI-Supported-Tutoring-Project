@@ -39,3 +39,10 @@ For an existing project that already has students, run migrations in order:
 2. `supabase/migrations/202606100003_weekly_plans_and_activities.sql`
 3. `supabase/migrations/202606100004_extracted_objectives.sql`
 4. `supabase/migrations/202606110001_ai_session_titles.sql`
+
+## Resource Studio development preview
+
+See [local preview setup and checks](docs/resource-studio-preview.md). The preview
+is development-only, uses server-only credentials, and does not save learner data.
+
+Checks: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
