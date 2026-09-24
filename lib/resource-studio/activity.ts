@@ -10,6 +10,7 @@ export type ResourceQuestion = {
   correctFeedback: string;
   incorrectFeedback: string;
   explanation: string;
+  misconceptionTag?: string;
 };
 
 export type ResourceActivity = {
@@ -72,6 +73,7 @@ export function parseResourceActivity(value: unknown): ResourceActivity {
       correctFeedback: text(q.correctFeedback, `${path}.correctFeedback`, true),
       incorrectFeedback: text(q.incorrectFeedback, `${path}.incorrectFeedback`, true),
       explanation: text(q.explanation, `${path}.explanation`, true),
+      ...(q.misconceptionTag === undefined ? {} : { misconceptionTag: text(q.misconceptionTag, `${path}.misconceptionTag`, true) }),
     };
   });
   unique(questions.map((q) => q.id), "questions duplicate IDs");

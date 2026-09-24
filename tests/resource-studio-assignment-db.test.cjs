@@ -193,9 +193,55 @@ test('Resource Studio private snapshots and server scoring in real PostgreSQL', 
     assert.equal((await db.query('delete from activity_results where activity_id=$1 returning id',[owned.activities[0]])).rows.length,0);
     await as(a);assert.equal((await attempt(owned.activities[0])).score,5);
   });
+  const report = async planId => (await db.query('select get_resource_studio_plan_report($1) v',[planId])).rows[0].v;
+  await t.test('plan report denies foreign, missing, anonymous and unapproved plan requests', async () => {
+    for (const [id,anonymous,role] of [[b,false,'authenticated'],[unapproved,false,'authenticated'],[a,true,'authenticated'],['',false,'authenticated'],['',false,'anon']]) {
+      await as(id,anonymous,role);await rejects(report(owned.plan),'42501');
+    }
+    await as(a);await rejects(report(foreign.plan),'42501');await rejects(report(randomUUID()),'42501');
+    await as(b);assert.deepEqual(await report(foreign.plan),[]);
+  });
+  await t.test('report reloads saved correctness, selected text and only incorrect-question tags', async () => {
+    await as(a);
+    const result=await report(owned.plan);
+    assert.equal(result.length,4);assert.deepEqual(await report(owned.plan),result);
+    const complete=result.find(r=>r.activityId===owned.activities[0]);
+    assert.equal(complete.attempt.score,5);assert.equal(complete.sourceVersion,1);
+    assert.equal(complete.attempt.submittedAt,(await attempt(owned.activities[0])).submittedAt);
+    assert.ok(complete.attempt.questions.every(q=>q.correct && q.misconceptionTags.length===0));
+    const partial=result.find(r=>r.activityId===owned.activities[4]);
+    assert.equal(partial.attempt.score,4);assert.equal(partial.attempt.total,5);
+    const q=partial.attempt.questions.find(q=>q.id==='q3');
+    assert.equal(q.correct,false);
+    assert.deepEqual(q.selections,[snapshot.questions[2].options.find(o=>o.id==='q3-a').text]);
+    assert.equal(q.feedback,(await attempt(owned.activities[4])).feedback.find(q=>q.id==='q3').message);
+    assert.deepEqual(q.misconceptionTags,[snapshot.questions[2].misconceptionTag]);
+    assert.doesNotMatch(JSON.stringify(result),/correctOptionIds|snapshot|generalCorrect|assigned_by|submitted_by/);
+    assert.ok(!result.some(r=>r.activityId===owned.activities[1] || r.activityId===owned.activities[2]));
+  });
+  await t.test('report distinguishes unsubmitted imports and legacy snapshots without tags', async () => {
+    await as(a);await assign(owned.activities[7]);
+    const legacy=structuredClone(snapshot);legacy.questions.forEach(q=>delete q.misconceptionTag);
+    await assign(owned.activities[8],legacy);await submit(owned.activities[8],{...answers,q3:['q3-a']});
+    const result=await report(owned.plan);
+    assert.equal(result.find(r=>r.activityId===owned.activities[7]).attempt,null);
+    assert.deepEqual(result.find(r=>r.activityId===owned.activities[8]).attempt.questions.find(q=>q.id==='q3').misconceptionTags,[]);
+    assert.deepEqual(result.map(r=>[r.sessionNumber,r.position]),[[1,1],[2,2],[2,3],[3,1],[3,2],[3,3]]);
+  });
+  await t.test('report is read-only and disabled integration cannot be queried', async () => {
+    await as(null,false,null);
+    const before=(await db.query('select * from practice_loop_private.resource_studio_attempts order by activity_id')).rows;
+    await as(a);await report(owned.plan);
+    await as(null,false,null);
+    assert.deepEqual((await db.query('select * from practice_loop_private.resource_studio_attempts order by activity_id')).rows,before);
+    await db.exec('update practice_loop_private.resource_studio_settings set enabled=false');
+    await as(a);await rejects(report(owned.plan),'55000');
+    await as(null,false,null);await db.exec('update practice_loop_private.resource_studio_settings set enabled=true');
+  });
   await t.test('deactivation denies all new RPCs despite a valid session', async () => {
     await as(null,false,null);await db.query('update tutors set active=false where id=$1',[a]);
     await as(a);await rejects(read(owned.activities[0]),'42501');await rejects(check(owned.activities[0],{}),'42501');await rejects(assign(owned.activities[3]),'42501');
     await rejects(attempt(owned.activities[0]),'42501');await rejects(submit(owned.activities[0],answers),'42501');
+    await rejects(report(owned.plan),'42501');
   });
 });

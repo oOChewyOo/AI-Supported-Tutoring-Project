@@ -43,7 +43,16 @@ test('retrieves and adapts the actual published envelope with server credentials
   assert.equal(result.questions.length, 5);
   assert.equal(result.contentVersion, 1);
   assert.equal(result.questions[2].correctOptionIds.length, 2);
+  assert.equal(result.questions[2].misconceptionTag, fixture.activityData.content.questions[2].misconceptionTag);
   assert.equal(JSON.stringify(result).includes('test-only-secret'), false);
+});
+
+test('optional misconception tags are preserved, never invented, and must be text', () => {
+  const without = structuredClone(fixture);
+  delete without.activityData.content.questions[0].misconceptionTag;
+  assert.equal(parseResourceActivity(without).questions[0].misconceptionTag, undefined);
+  without.activityData.content.questions[0].misconceptionTag = { unsafe: 'object' };
+  assert.throws(() => parseResourceActivity(without), /misconceptionTag/);
 });
 
 for (const status of [401, 403, 404, 500]) {
