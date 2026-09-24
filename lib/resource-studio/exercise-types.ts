@@ -22,3 +22,15 @@ export type ResourceCheckState = {
 };
 
 export type ResourceAssignmentState = { error?: string };
+
+export type ResourceAttempt = {
+  selections: Record<string, string[]>;
+  score: number;
+  total: number;
+  feedback: { id: string; correct: boolean; message: string; explanation: string }[];
+  submittedAt: string;
+  sourceActivityId: string;
+  sourceVersion: number;
+};
+
+export type ResourceAttemptState = { error?: string; attempt?: ResourceAttempt };

@@ -6,6 +6,7 @@ import { getActivity } from "@/lib/data";
 import { ResourceStudioExercise } from "@/components/resource-studio-exercise";
 import { getResourceExercise } from "@/lib/resource-studio/assignments";
 import { ResourceStudioError } from "@/lib/resource-studio/activity";
+import { getResourceAttempt } from "@/lib/resource-studio/attempts";
 
 export default async function ActivityPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,12 +16,17 @@ export default async function ActivityPage({ params }: { params: Promise<{ id: s
   if (data.activity.resourceStudioAssigned) {
     if (process.env.NODE_ENV !== "development") notFound();
     let exercise;
+    let attempt;
     let message;
-    try { exercise = await getResourceExercise(id); }
+    try {
+      // Do not offer a fresh submission if the saved-result read fails.
+      attempt = await getResourceAttempt(id);
+      exercise = await getResourceExercise(id);
+    }
     catch (error) { message = error instanceof ResourceStudioError ? error.message : "Could not load the imported exercise."; }
     return <main className="narrow-shell">
       <Link href={`/plans/${data.planId}`} className="back-link">Back to weekly plan</Link>
-      {exercise ? <ResourceStudioExercise activityId={id} exercise={exercise} />
+      {exercise ? <ResourceStudioExercise key={id} activityId={id} exercise={exercise} savedAttempt={attempt ?? null} />
         : <><h1>Imported exercise unavailable</h1><p role="alert">{message ?? "The saved snapshot could not be found."}</p></>}
     </main>;
   }

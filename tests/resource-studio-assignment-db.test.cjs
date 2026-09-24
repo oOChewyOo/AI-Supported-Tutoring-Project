@@ -46,6 +46,8 @@ test('Resource Studio private snapshots and server scoring in real PostgreSQL', 
   const assign = (id, value = snapshot) => db.query('select assign_resource_studio_activity($1,$2::jsonb)', [id,JSON.stringify(value)]);
   const read = async id => (await db.query('select get_resource_studio_exercise($1) v',[id])).rows[0].v;
   const check = async (id, answers) => (await db.query('select check_resource_studio_answers($1,$2::jsonb) v',[id,JSON.stringify(answers)])).rows[0].v;
+  const submit = async (id, answers) => (await db.query('select submit_resource_studio_attempt($1,$2::jsonb) v',[id,JSON.stringify(answers)])).rows[0].v;
+  const attempt = async id => (await db.query('select get_resource_studio_attempt($1) v',[id])).rows[0].v;
   const rejects = (promise, code) => assert.rejects(promise, e => e.code === code);
 
   await t.test('disabled by default; ordinary tutors cannot enable the integration', async () => {
@@ -119,8 +121,81 @@ test('Resource Studio private snapshots and server scoring in real PostgreSQL', 
     assert.equal(Number((await db.query('select count(*) n from activity_results')).rows[0].n),count);
     await as(b);await rejects(check(owned.activities[0],answers),'42501');
   });
+  const answers=Object.fromEntries(snapshot.questions.map(q=>[q.id,[...q.correctOptionIds].reverse()]));
+  await t.test('unfinished and forged submissions cannot create completion or attempts', async () => {
+    await as(a);
+    assert.equal(await attempt(owned.activities[0]),null);
+    for (const invalid of [{}, {...answers,q1:[]}, {...answers,q1:['unknown']}, {...answers,q3:['q3-a','q3-a']}, {...answers,q1:['q1-a','q1-b']}, {...answers,score:999}, {...answers,q3:'q3-a'}]) {
+      await rejects(submit(owned.activities[0],invalid),'22023');
+      assert.equal(await attempt(owned.activities[0]),null);
+    }
+    await rejects(db.query('insert into activity_results(activity_id,student_id,completed,completed_at) values ($1,$2,true,now())',[owned.activities[0],owned.student]),'42501');
+    await rejects(db.query("insert into practice_loop_private.resource_studio_attempts(activity_id,student_id,submitted_by,submitted_at,selections,score,total,feedback) values ($1,$2,$3,now(),'{}',99,99,'[]')",[owned.activities[0],owned.student,a]),'42501');
+    assert.equal((await db.query('select * from activity_results where activity_id=$1',[owned.activities[0]])).rows.length,0);
+  });
+  await t.test('anonymous, foreign and unapproved callers cannot submit or reload attempts', async () => {
+    for (const [id,anonymous,role] of [[b,false,'authenticated'],[unapproved,false,'authenticated'],[a,true,'authenticated'],['',false,'authenticated'],['',false,'anon']]) {
+      await as(id,anonymous,role);
+      await rejects(submit(owned.activities[0],answers),'42501');
+      await rejects(attempt(owned.activities[0]),'42501');
+    }
+  });
+  await t.test('failure writing completion rolls back the entire attempt; retry succeeds', async () => {
+    await as(null,false,null);
+    await db.exec(`create function public.test_fail_completion() returns trigger language plpgsql as $$ begin raise exception 'Synthetic persistence failure' using errcode='23514'; end $$;
+      create trigger test_fail_completion before insert on activity_results for each row execute function public.test_fail_completion();`);
+    await as(a);
+    await rejects(submit(owned.activities[0],answers),'23514');
+    assert.equal(await attempt(owned.activities[0]),null);
+    assert.equal((await db.query('select * from activity_results where activity_id=$1',[owned.activities[0]])).rows.length,0);
+    await as(null,false,null);await db.exec('drop trigger test_fail_completion on activity_results; drop function public.test_fail_completion();');
+    await as(a);
+    const saved=await submit(owned.activities[0],answers);
+    assert.equal(saved.score,5);assert.equal(saved.total,5);assert.equal(saved.sourceVersion,1);assert.equal(saved.sourceActivityId,snapshot.id);
+    assert.deepEqual(saved.selections,answers);assert.ok(saved.feedback.every(f=>f.correct));
+    assert.ok(Number.isFinite(Date.parse(saved.submittedAt)));
+    assert.doesNotMatch(JSON.stringify(saved),/correctOptionIds|snapshot/);
+    assert.deepEqual(await attempt(owned.activities[0]),saved);
+    const completion=(await db.query('select * from activity_results where activity_id=$1',[owned.activities[0]])).rows[0];
+    assert.equal(completion.completed,true);assert.equal(new Date(completion.completed_at).toISOString(),new Date(saved.submittedAt).toISOString());
+    assert.equal(completion.student_id,owned.student);
+  });
+  await t.test('duplicate and competing submissions return the original immutable result', async () => {
+    await as(a);
+    const saved=await attempt(owned.activities[0]);
+    const results=await Promise.all([submit(owned.activities[0],answers),submit(owned.activities[0],{...answers,q3:['q3-a']})]);
+    results.forEach(result=>assert.deepEqual(result,saved));
+    assert.equal((await db.query('select * from activity_results where activity_id=$1',[owned.activities[0]])).rows.length,1);
+    await as(null,false,null);
+    assert.equal(Number((await db.query('select count(*) n from practice_loop_private.resource_studio_attempts where activity_id=$1',[owned.activities[0]])).rows[0].n),1);
+  });
+  await t.test('incorrect, partial and extra selections persist exact-set correctness', async () => {
+    await as(a);
+    for (const [index,selection] of [[4,['q3-a']],[5,['q3-a','q3-b','q3-c']],[6,['q3-c']]]) {
+      await assign(owned.activities[index]);
+      const submitted={...answers,q3:selection};
+      const saved=await submit(owned.activities[index],submitted);
+      assert.equal(saved.score,4);assert.equal(saved.total,5);
+      assert.equal(saved.feedback.find(f=>f.id==='q3').correct,false);
+      assert.deepEqual(saved.selections,submitted);assert.deepEqual(await attempt(owned.activities[index]),saved);
+    }
+  });
+  await t.test('saved attempts and their completion cannot be forged, overwritten, moved or deleted', async () => {
+    await as(a);
+    for (const sql of ["update activity_results set completed=false where activity_id=$1", "update activity_results set completed_at=now() where activity_id=$1", "delete from activity_results where activity_id=$1"]) await rejects(db.query(sql,[owned.activities[0]]),'42501');
+    for (const sql of ['select * from practice_loop_private.resource_studio_attempts','update practice_loop_private.resource_studio_attempts set score=0','delete from practice_loop_private.resource_studio_attempts']) await rejects(db.query(sql),'42501');
+    await rejects(db.query('delete from activities where id=$1',[owned.activities[0]]),'42501');
+    const otherSession=(await db.query('select weekly_session_id from activities where id=$1',[owned.activities[3]])).rows[0].weekly_session_id;
+    await rejects(db.query('update activities set weekly_session_id=$2 where id=$1',[owned.activities[0],otherSession]),'42501');
+    await as(b);
+    await rejects(attempt(owned.activities[0]),'42501');await rejects(submit(owned.activities[0],answers),'42501');
+    assert.equal((await db.query('select * from activity_results where activity_id=$1',[owned.activities[0]])).rows.length,0);
+    assert.equal((await db.query('delete from activity_results where activity_id=$1 returning id',[owned.activities[0]])).rows.length,0);
+    await as(a);assert.equal((await attempt(owned.activities[0])).score,5);
+  });
   await t.test('deactivation denies all new RPCs despite a valid session', async () => {
     await as(null,false,null);await db.query('update tutors set active=false where id=$1',[a]);
     await as(a);await rejects(read(owned.activities[0]),'42501');await rejects(check(owned.activities[0],{}),'42501');await rejects(assign(owned.activities[3]),'42501');
+    await rejects(attempt(owned.activities[0]),'42501');await rejects(submit(owned.activities[0],answers),'42501');
   });
 });

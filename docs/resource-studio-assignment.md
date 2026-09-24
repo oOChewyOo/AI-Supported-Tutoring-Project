@@ -1,5 +1,11 @@
 # Assign a published Resource Studio exercise locally
 
+**Follow-on milestone:** the assigned exercise now supports one saved completed
+attempt. After the assignment setup below, follow [saved-attempt setup](resource-studio-attempts.md)
+and apply its additional migration manually. The original no-persistence testing
+steps below describe the assignment milestone alone; the current activity page
+uses **Submit completed attempt** and displays the saved result after refresh.
+
 This milestone assigns the published equivalent-fractions MCQ to one existing,
 unused placeholder owned by an approved tutor. Use an existing fictional student.
 It does not create students, save answers/completion, generate AI content, or add
@@ -54,7 +60,9 @@ The primary key prevents duplicate imports; generated content, a template ID or 
 existing completion record disqualifies the slot. Resource Studio edits do not
 update a saved snapshot. Use another unused slot for another version. Deleting an
 owned activity/plan through existing permitted operations cascades deletion of its
-snapshot; there is no tutor snapshot update/delete endpoint.
+snapshot; there is no tutor snapshot update/delete endpoint. With the follow-on
+attempt migration, a completed attempt prevents that deletion to preserve its
+snapshot and results; see the saved-attempt guide above.
 
 ## Exact local setup and verification
 

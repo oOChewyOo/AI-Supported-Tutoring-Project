@@ -18,7 +18,7 @@ require.extensions['.tsx'] = require.extensions['.ts'] = (module, filename) => m
 const originalEnv={...process.env}, originalFetch=global.fetch;
 const fixture=require('./fixtures/resource-studio-activity.json');
 const activityId='11111111-1111-4111-8111-111111111111';
-let rows, calls, fetches, response, rpcError, rpcData, invalidations;
+let rows, calls, fetches, response, rpcError, rpcData, rpcAttempt, rpcThrows, invalidations;
 beforeEach(() => {
   process.env.NODE_ENV='development';
   process.env.RESOURCE_STUDIO_BASE_URL='http://localhost:3001';
@@ -30,7 +30,7 @@ beforeEach(() => {
     students:{ id:'student',owner_tutor_id:'tutor-a',name:'Fictional' },
     lesson_reflections:{ id:'reflection',student_id:'student' },
   };
-  calls=[];fetches=0;response=structuredClone(fixture);rpcError=null;rpcData=null;invalidations=[];
+  calls=[];fetches=0;response=structuredClone(fixture);rpcError=null;rpcData=null;rpcAttempt=null;rpcThrows=false;invalidations=[];
   global.fetch=async()=>{fetches++;return Response.json(response);};
   const supabase={
     from(table) {
@@ -39,7 +39,7 @@ beforeEach(() => {
         maybeSingle:async()=>({data:rows[table] && filters.every(([k,v])=>rows[table][k]===v)?rows[table]:null,error:null}) };
       return query;
     },
-    rpc:async(name,args)=>{calls.push({name,args});return {data:rpcData,error:rpcError};},
+    rpc:async(name,args)=>{calls.push({name,args});if(rpcThrows)throw Error('private network diagnostics');return {data:name==='get_resource_studio_attempt'?rpcAttempt:rpcData,error:rpcError};},
   };
   mocks['@/lib/auth']={requireTutor:async()=>({supabase,user:{id:'tutor-a'}})};
   mocks['next/navigation']={redirect:url=>{throw Error('REDIRECT:'+url);},notFound:()=>{throw Error('NOT_FOUND');}};
@@ -141,4 +141,71 @@ test('imported activity page is unavailable in production',async()=>{
   mocks['@/lib/data']={getActivity:async()=>({activity:{resourceStudioAssigned:true},planId:'plan'})};
   await assert.rejects(()=>require('../app/activities/[id]/page.tsx').default({params:Promise.resolve({id:activityId})}),/NOT_FOUND/);
   assert.equal(calls.length,0);
+});
+
+const submitActions=()=>require('../lib/resource-studio/attempt-actions.ts');
+const savedAttempt=()=>({score:1,total:2,selections:{q1:['a'],q2:['b']},feedback:[{id:'q1',correct:true,message:'Well done',explanation:'Explanation'},{id:'q2',correct:false,message:'Keep practising',explanation:'Explanation'}],submittedAt:'2026-09-24T12:00:00.000Z',sourceActivityId:fixture.id,sourceVersion:1});
+test('final submission sends selections only and invalidates activity and existing progress pages',async()=>{
+  const f=new FormData();f.set('score','999');f.set('student_id','foreign');f.set('snapshot','forged');f.append('answer:q1','a');
+  rpcData=savedAttempt();
+  assert.deepEqual(await submitActions().submitResourceStudioAttempt(activityId,{attempt:{score:999}},f),{attempt:rpcData});
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])),{name:'submit_resource_studio_attempt',args:{p_activity_id:activityId,p_answers:{q1:['a']}}});
+  assert.deepEqual(invalidations,['/activities/'+activityId,'/plans/plan','/students/student']);
+  assert.equal(fetches,0);
+});
+test('final submission and reload reject unauthenticated requests before IO',async()=>{
+  mocks['@/lib/auth'].requireTutor=async()=>{throw Error('REDIRECT:/login');};
+  await assert.rejects(()=>submitActions().submitResourceStudioAttempt(activityId,{},form()),/REDIRECT:\/login/);
+  await assert.rejects(()=>require('../lib/resource-studio/attempts.ts').getResourceAttempt(activityId),/REDIRECT:\/login/);
+  assert.equal(calls.length,0);
+});
+test('foreign hierarchy prevents final-submission RPC',async()=>{
+  rows.students.owner_tutor_id='tutor-b';
+  assert.ok((await submitActions().submitResourceStudioAttempt(activityId,{},form())).error);
+  assert.equal(calls.length,0);assert.equal(invalidations.length,0);
+});
+test('persistence errors and uncertain transport failures never claim completion',async()=>{
+  for(const code of ['42501','22023','23514','PGRST202']) {
+    rpcError={code,message:'private diagnostics'};
+    const state=await submitActions().submitResourceStudioAttempt(activityId,{},form());
+    assert.ok(state.error);assert.equal(state.attempt,undefined);assert.doesNotMatch(state.error,/private diagnostics/);
+  }
+  rpcThrows=true;
+  assert.match((await submitActions().submitResourceStudioAttempt(activityId,{},form())).error,/Reload.*submit again safely/);
+  assert.equal(invalidations.length,0);
+});
+test('reload passes stored responses to the activity page and does not fetch Resource Studio',async()=>{
+  mocks['@/lib/data']={getActivity:async()=>({activity:{resourceStudioAssigned:true},planId:'plan'})};
+  rpcData={id:fixture.id,contentVersion:1,title:'Saved exercise',instructions:'Choose',questions:[]};
+  rpcAttempt=savedAttempt();
+  const page=await require('../app/activities/[id]/page.tsx').default({params:Promise.resolve({id:activityId})});
+  assert.deepEqual(page.props.children[1].props.savedAttempt,rpcAttempt);
+  assert.deepEqual(calls.map(c=>c.name),['get_resource_studio_attempt','get_resource_studio_exercise']);
+  assert.equal(fetches,0);
+});
+test('failed saved-result read shows unavailable rather than a new attempt form',async()=>{
+  mocks['@/lib/data']={getActivity:async()=>({activity:{resourceStudioAssigned:true},planId:'plan'})};
+  rpcError={code:'PGRST202'};
+  const page=await require('../app/activities/[id]/page.tsx').default({params:Promise.resolve({id:activityId})});
+  assert.equal(page.props.children[1].props.children[0].props.children,'Imported exercise unavailable');
+  assert.deepEqual(calls.map(c=>c.name),['get_resource_studio_attempt']);
+});
+test('attempt submission and saved-result reads are development-only',async()=>{
+  process.env.NODE_ENV='production';
+  await assert.rejects(()=>submitActions().submitResourceStudioAttempt(activityId,{},form()),/only in development/);
+  await assert.rejects(()=>require('../lib/resource-studio/attempts.ts').getResourceAttempt(activityId),/only in development/);
+  assert.equal(calls.length,0);
+});
+test('exercise renders final saved selections, score and feedback without a resubmit control',()=>{
+  const React=require('react');
+  mocks['./resource-studio-preview.module.css']={default:{}};
+  mocks.react={...React,useActionState:()=>[{},()=>{},false],useState:()=>[{},()=>{}]};
+  const {renderToStaticMarkup}=require('react-dom/server');
+  const {ResourceStudioExercise}=require('../components/resource-studio-exercise.tsx');
+  const exercise={id:fixture.id,contentVersion:1,title:'Fractions',instructions:'Choose',questions:[{id:'q1',prompt:'Question one',supportingText:'',hint:'Hint',multiple:false,options:[{id:'a',text:'One half'},{id:'b',text:'One third'}]}]};
+  const markup=renderToStaticMarkup(ResourceStudioExercise({activityId,exercise,savedAttempt:savedAttempt()}));
+  assert.match(markup,/1 of 2 correct/);assert.match(markup,/Saved response:.*One half/);assert.match(markup,/Well done/);assert.match(markup,/2026-09-24/);
+  assert.doesNotMatch(markup,/Submit completed attempt|type="radio"|correctOptionIds/);
+  const unfinished=renderToStaticMarkup(ResourceStudioExercise({activityId,exercise,savedAttempt:null}));
+  assert.match(unfinished,/Submit completed attempt/);assert.match(unfinished,/type="radio"/);assert.doesNotMatch(unfinished,/Completed and saved/);
 });
