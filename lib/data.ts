@@ -62,6 +62,7 @@ type ActivityRow = {
   minutes: number;
   template_id: string | null;
   content_json: unknown;
+  resource_studio_assigned?: boolean;
 };
 
 type ActivityResultRow = {
@@ -311,6 +312,7 @@ export async function getWeeklyPlan(id: string): Promise<WeeklyPlan | null> {
           type: activity.activity_type,
           minutes: activity.minutes,
           completed: completedIds.has(activity.id),
+          resourceStudioAssigned: Boolean(activity.resource_studio_assigned),
           templateId: activity.template_id ?? null,
           contentJson: isGeneratedActivityContent(activity.content_json) ? activity.content_json : null,
         }));
@@ -374,6 +376,7 @@ export async function getActivity(id: string) {
       type: activity.activity_type,
       minutes: activity.minutes,
       completed: Boolean(resultResult.data?.completed),
+      resourceStudioAssigned: Boolean(activity.resource_studio_assigned),
       templateId: activity.template_id ?? null,
       contentJson: isGeneratedActivityContent(activity.content_json) ? activity.content_json : null,
     } satisfies PracticeActivity,

@@ -52,6 +52,7 @@ export type PracticeActivity = {
   completed: boolean;
   templateId: string | null;
   contentJson: GeneratedActivityContent | null;
+  resourceStudioAssigned: boolean;
 };
 
 export type PracticeSession = {

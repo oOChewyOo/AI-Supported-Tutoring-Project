@@ -25,9 +25,9 @@ test('full migration history: tutor ownership, quarantine, grants and RPC', asyn
     alter default privileges in schema public grant all on tables to anon, authenticated;
   `);
   const migrations = fs.readdirSync('supabase/migrations').filter((f) => f.endsWith('.sql')).sort();
-  const security = migrations.pop();
-  assert.equal(security, '202609220001_tutor_auth_ownership.sql');
-  for (const file of migrations) {
+  const security = '202609220001_tutor_auth_ownership.sql';
+  assert.ok(migrations.includes(security));
+  for (const file of migrations.filter(file => file < security)) {
     // gen_random_uuid is built in. pgcrypto extension packaging is not part of PGlite.
     await db.exec(fs.readFileSync(`supabase/migrations/${file}`, 'utf8').replace('create extension if not exists pgcrypto;', ''));
   }
@@ -39,6 +39,9 @@ test('full migration history: tutor ownership, quarantine, grants and RPC', asyn
   // Simulate an extra permissive policy from database drift: cutover must remove it too.
   await db.exec('create policy stray_public_policy on activities for all to public using (true) with check (true)');
   await db.exec(fs.readFileSync(`supabase/migrations/${security}`, 'utf8'));
+  for (const file of migrations.filter(file => file > security)) {
+    await db.exec(fs.readFileSync(`supabase/migrations/${file}`, 'utf8'));
+  }
 
   const a = randomUUID(), b = randomUUID(), unapproved = randomUUID();
   await db.query('insert into auth.users values ($1),($2),($3)', [a, b, unapproved]);

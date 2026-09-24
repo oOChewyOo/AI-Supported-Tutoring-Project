@@ -305,7 +305,7 @@ test('middleware denies anonymous tutor routes, preserves refreshed cookies and 
   } }) };
   const { NextRequest } = require('next/server');
   const { middleware, config } = require('../middleware.ts');
-  assert.deepEqual(config.matcher, ['/login', '/dashboard/:path*', '/students/:path*', '/plans/:path*', '/activities/:path*']);
+  assert.deepEqual(config.matcher, ['/login', '/dashboard/:path*', '/students/:path*', '/plans/:path*', '/activities/:path*', '/dev/resource-studio/assign/:path*']);
   const response = await middleware(new NextRequest('http://localhost:3000/students/guessed-id'));
   assert.equal(response.status, 307);
   assert.equal(response.headers.get('location'), 'http://localhost:3000/login');
