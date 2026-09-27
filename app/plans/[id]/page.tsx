@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
 import { getWeeklyPlan } from "@/lib/data";
 import { ResourceStudioPlanReport } from "@/components/resource-studio-plan-report";
+import { ResourceStudioSearch } from "@/components/resource-studio-search";
 
 export default async function WeeklyPlanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,6 +29,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
         <div><span>What we covered</span><strong>{plan.reflection.whatWeCovered}</strong></div>
       </section>
       {process.env.NODE_ENV === "development" && <ResourceStudioPlanReport planId={plan.id} />}
+      {process.env.NODE_ENV === "development" && <ResourceStudioSearch key={plan.id} planId={plan.id} />}
       <section className="weekly-session-list">
         {plan.sessions.length ? plan.sessions.map((session) => (
           <article className={`weekly-session ${session.completed ? "is-complete" : ""}`} key={session.id}>
