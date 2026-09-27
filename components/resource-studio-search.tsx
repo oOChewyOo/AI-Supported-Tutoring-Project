@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { searchResourceStudioAction } from "@/lib/resource-studio/search-actions";
 import type { ResourceSearchItem, ResourceSearchResults, ResourceSearchState } from "@/lib/resource-studio/search-types";
-import { ResourceStudioSelectedPreview } from "./resource-studio-selected-preview";
+import { ResourceStudioSessionPlanner } from "./resource-studio-session-planner";
 import styles from "./resource-studio-search.module.css";
 
 export function ResourceSearchResultsView({ results, pending, error, onPreview }: {
@@ -43,7 +43,7 @@ export function ResourceStudioSearch({ planId }: { planId: string }) {
 
   return <section className={styles.search} aria-labelledby="resource-search-heading">
     <h2 id="resource-search-heading">Resource Studio library</h2>
-    <p>Development only · Search and preview published multiple-choice activities for a fictional test student. Nothing is assigned here.</p>
+    <p>Development only · Search, preview and save planning references for a fictional test student. Nothing is assigned here.</p>
     <form action={action} aria-busy={pending} hidden={Boolean(selected)}>
       <fieldset disabled={pending}>
         <legend>Search filters</legend>
@@ -63,9 +63,8 @@ export function ResourceStudioSearch({ planId }: { planId: string }) {
         </nav>}
       </fieldset>
     </form>
-    {selected && <ResourceStudioSelectedPreview key={`${planId}:${selected.id}:${selected.contentVersion}`} planId={planId}
-      activityId={selected.id} version={selected.contentVersion} fictional={fictional} onClose={() => {
-        const buttonId = `resource-preview-${selected.id}`;
+    {fictional && <ResourceStudioSessionPlanner key={planId} planId={planId} selected={selected} onClose={() => {
+        const buttonId = `resource-preview-${selected?.id}`;
         setSelected(null);
         requestAnimationFrame(() => document.getElementById(buttonId)?.focus());
       }} />}

@@ -193,7 +193,7 @@ test('initial, loading, empty and error states are distinct; stale results are h
 });
 function searchMarkup(state, fields = ['fractions', 'Maths', 'Year 4', true], pending = false) {
   const react = require('react'); let index = 0;
-  mocks.react = { ...react, useActionState: () => [state, () => {}, pending], useState: () => [fields[index++], () => {}] };
+  mocks.react = { ...react, useActionState: () => [state, () => {}, pending], useState: initial => [index < fields.length ? fields[index++] : (typeof initial === 'function' ? initial() : initial), () => {}] };
   delete require.cache[require.resolve('../components/resource-studio-search.tsx')];
   return render(component().ResourceStudioSearch({ planId }));
 }

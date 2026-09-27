@@ -16,3 +16,12 @@
 .results p { margin: .25rem 0; }
 .pagination { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: .875rem; }
 @media (max-width: 700px) { .filters { grid-template-columns: 1fr; } }
+.planner { margin-top: 1rem; }
+.selectionControls { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; margin: 1rem 0; }
+.selectionControls label { display: grid; gap: .5rem; }
+.selectionControls select { max-width: 100%; padding: .5rem; }
+.sessionSelections { border-top: 1px solid var(--line); padding: .75rem 0; }
+.sessionSelections h4 { margin: 0; }
+.sessionSelections ul { list-style: none; padding: 0; }
+.sessionSelections li { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin: .5rem 0; }
+.search select:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }

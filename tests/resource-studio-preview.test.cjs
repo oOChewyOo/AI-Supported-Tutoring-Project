@@ -186,8 +186,8 @@ test('opening and closing an inline preview preserves search query, filters, res
   const button = flatten(ResourceSearchResultsView(results.props)).find(n => n.type === 'button');
   assert.equal(button.props.type, 'button'); button.props.onClick();
   tree = draw(); assert.equal(flatten(tree).find(n => n.type === 'form').props.hidden, true);
-  const panel = flatten(tree).find(n => n.type?.name === 'ResourceStudioSelectedPreview');
-  assert.equal(panel.props.activityId, activityId); assert.equal(panel.props.version, 7); assert.equal(panel.props.fictional, true);
+  const panel = flatten(tree).find(n => n.type?.name === 'ResourceStudioSessionPlanner');
+  assert.equal(panel.props.selected.id, activityId); assert.equal(panel.props.selected.contentVersion, 7);
   assert.ok(!flatten(flatten(tree).find(n => n.type === 'form')).some(n => n === panel));
   const previousRAF = global.requestAnimationFrame;
   global.requestAnimationFrame = () => 0;
@@ -219,6 +219,17 @@ test('successful action result mounts the reused renderer with the exact version
   harness.draw(); harness.start(); await Promise.resolve();
   const rendered = flatten(harness.draw()).find(n => n.type?.name === 'ResourceStudioPreview');
   assert.equal(rendered.props.activity.contentVersion, 7); assert.equal(rendered.props.embedded, true);
+});
+
+test('session controls are offered only after a successful validated preview', async () => {
+  const React = require('react'); let state = null, offered = null;
+  mocks.react = { ...React, useState: () => [state, () => {}], useRef: () => ({ current: null }), useEffect: () => {} };
+  const { ResourceStudioSelectedPreview } = require('../components/resource-studio-selected-preview.tsx');
+  const draw = () => ResourceStudioSelectedPreview({ planId, activityId, version: 7, fictional: true, onClose() {},
+    selectionControls: activity => { offered = activity; return React.createElement('button', { type: 'button' }, 'Add to session'); } });
+  draw(); assert.equal(offered, null);
+  state = { error: 'Unavailable', unavailable: true }; draw(); assert.equal(offered, null);
+  state = { activity: parse(payload) }; draw(); assert.equal(offered.id, activityId); assert.equal(offered.contentVersion, 7);
 });
 test('closing a pending preview discards its late answer-bearing response', async () => {
   let resolve; const harness = panelHarness(new Promise(r => { resolve = r; }));

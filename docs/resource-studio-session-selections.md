@@ -2,7 +2,23 @@
 
 This development-only backend adds planning references alongside the existing
 three activity slots. It does not assign activities or create learner results,
-attempts, completions, or exercise routes. There is no UI in this checkpoint.
+attempts, completions, or exercise routes.
+
+The weekly-plan Resource Studio section now loads session planning references
+after the existing fictional-student confirmation. A successful inline preview
+offers a session picker and Add to session, passing the validated preview's ID
+and exact version to the existing add action. The server still re-fetches the
+publication before saving. Existing identical selections show Already selected;
+another selected version requires removal first. Action failures retain the
+current list and show a sanitized error.
+
+Selected resources appear under session headings within the library section,
+with title, version and Remove. This placement preserves the protected weekly-plan
+page byte-for-byte; it does not inject references into ordinary activity cards.
+Closing the preview preserves search filters, pagination and results. No extra
+confirmation dialog is added. The read-only session-options action authenticates
+the tutor and validates plan ownership before returning only session identifiers,
+numbers and titles; list/add/remove use the existing selection actions.
 
 `listResourceSessionSelections`, `addResourceSessionSelection`, and
 `removeResourceSessionSelection` require a fresh active tutor session, an owned
