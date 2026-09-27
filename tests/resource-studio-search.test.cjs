@@ -202,7 +202,8 @@ test('search form has bounded labeled inputs, fictional confirmation and working
   const markup = searchMarkup({ query: { q: 'fractions', subject: 'Maths', yearGroup: 'Year 4' }, results });
   assert.match(markup, /name="q"/); assert.match(markup, /maxLength="120"/); assert.match(markup, /required="" name="fictional"/);
   assert.match(markup, /value="1" name="page"/); assert.match(markup, /value="0" disabled/); assert.match(markup, /value="2"/);
-  assert.match(markup, /do not include names or personal information/); assert.doesNotMatch(markup, /synthetic-integration-secret|Assign|Preview/);
+  assert.match(markup, /do not include names or personal information/); assert.doesNotMatch(markup, /synthetic-integration-secret|Assign/);
+  assert.match(markup, /Preview activity/);
 });
 test('changing filters hides stale results and pagination; pending disables the form', () => {
   const state = { query: { q: 'fractions', subject: 'Maths', yearGroup: 'Year 4' }, results: { ...result(), total: 11, totalPages: 2 } };

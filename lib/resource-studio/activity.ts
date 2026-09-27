@@ -45,9 +45,9 @@ function unique(ids: string[], path: string) {
 }
 
 /** Adapter for the observed Resource Studio API, independent of stored Practice Loop content. */
-export function parseResourceActivity(value: unknown): ResourceActivity {
+export function parseResourceActivity(value: unknown, expectedId = RESOURCE_ACTIVITY_ID): ResourceActivity {
   const root = record(value, "response");
-  if (root.id !== RESOURCE_ACTIVITY_ID) invalid("id");
+  if (root.id !== expectedId) invalid("id");
   if (typeof root.contentVersion !== "number" || !Number.isSafeInteger(root.contentVersion) || root.contentVersion < 1) invalid("contentVersion");
   text(root.title, "title");
   const data = record(root.activityData, "activityData");
@@ -78,7 +78,7 @@ export function parseResourceActivity(value: unknown): ResourceActivity {
   });
   unique(questions.map((q) => q.id), "questions duplicate IDs");
   return {
-    id: RESOURCE_ACTIVITY_ID, contentVersion: root.contentVersion,
+    id: expectedId, contentVersion: root.contentVersion,
     title: text(data.title, "activityData.title"), instructions: text(data.instructions, "instructions"),
     feedback: { generalCorrect: text(feedback.generalCorrect, "feedback.generalCorrect"), generalIncorrect: text(feedback.generalIncorrect, "feedback.generalIncorrect") },
     questions,
