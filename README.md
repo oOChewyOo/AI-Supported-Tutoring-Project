@@ -1,5 +1,8 @@
 # Practice Loop
 
+Coding agents: start with [AGENTS.md](AGENTS.md), the [current handoff](docs/AI_DEVELOPMENT_HANDOFF.md),
+[roadmap](docs/ROADMAP.md), and [canonical/runtime directory rules](docs/LOCAL_DEVELOPMENT_LAYOUT.md).
+
 An MVP for extending human tutoring sessions with short, focused practice through the week.
 
 ## Run locally
