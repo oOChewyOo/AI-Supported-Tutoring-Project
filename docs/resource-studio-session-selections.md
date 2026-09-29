@@ -13,8 +13,8 @@ another selected version requires removal first. Action failures retain the
 current list and show a sanitized error.
 
 Selected resources appear under session headings within the library section,
-with title, version and Remove. This placement preserves the protected weekly-plan
-page byte-for-byte; it does not inject references into ordinary activity cards.
+with title, version and Remove. These planning references are separate from
+ordinary activity cards and do not create learner assignments.
 Closing the preview preserves search filters, pagination and results. No extra
 confirmation dialog is added. The read-only session-options action authenticates
 the tutor and validates plan ownership before returning only session identifiers,

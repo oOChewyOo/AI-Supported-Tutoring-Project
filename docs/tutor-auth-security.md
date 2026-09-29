@@ -1,9 +1,16 @@
 # Tutor authentication: audit, review and manual rollout
 
-Status: implementation and local review only. No hosted database migration,
-Auth account creation, data assignment, or deployment has been performed.
+Historical tutor-auth checkpoint status (2026-09-22): implementation and local
+review only. No hosted database migration, Auth account creation, data assignment,
+or deployment had been performed at that checkpoint.
 Feature branch: `codex/tutor-auth-ownership`. The completed Resource Studio preview is independent.
-Unreviewed AI activity-generation work is excluded from this checkpoint.
+Unreviewed AI activity-generation work was excluded from this checkpoint.
+
+Worktree review on 2026-09-29 removed the uncommitted direct activity generator
+after a private recovery snapshot. Resource Studio owns activity authoring;
+see [the generation handoff](resource-studio-generation-handoff.md). The six
+learner actions in `lib/actions.ts` retain their tutor guards. Resource Studio's
+separate authenticated actions are covered by its own integration suites.
 
 ## Repository audit
 
@@ -20,6 +27,14 @@ treated as authoritative. Actual hosted database drift has not been inspected.
 | `202606100004_extracted_objectives.sql` | Anonymous SELECT/INSERT/UPDATE of objectives. Student and reflection references can disagree. |
 | `202606110001_ai_session_titles.sql` | Adds unrestricted anonymous UPDATE on sessions. Must be removed too. |
 | `202606110002_activity_content_storage.sql` | Adds nullable template/content columns; no authentication. |
+
+The discarded, never-committed `202607090001_activity_content_update_policy.sql`
+experiment allowed unrestricted anonymous UPDATE of activities. It is not part
+of the migration history and must not be applied. The same uncommitted policy
+addition was removed from `schema.sql`; its historical-snapshot warning remains.
+The committed security cutover removes all prior learner-table policies,
+including any such local drift present at cutover. This source review makes no
+claim about policies installed in an existing database.
 
 The prior server client discarded sessions and used the anonymous key for every
 request. The browser client was unused and did not share SSR cookies. Data
@@ -198,8 +213,9 @@ installation audit reported zero known vulnerabilities.
   can remain usable until expiry. Deactivating tutor membership blocks database
   access immediately even for an otherwise valid JWT. Review session lifetime,
   password recovery, MFA and operational audit logging before real learner use.
-- Existing AI generation sends authorized tutor-entered information to OpenAI;
-  it now runs after authentication and scoped lookup. Data-processing approval
+- Existing objective extraction and session-title generation send authorized
+  tutor-entered information to OpenAI after authentication and scoped lookup.
+  Data-processing approval
   remains a separate decision before any real learner information is entered.
 
 ## Decisions needing review before rollout
@@ -237,9 +253,9 @@ repository files or integration settings were changed.
 
 ## Files changed in this milestone
 
-This list excludes pre-existing activity generation and Resource Studio changes.
-Those remain in the working tree unchanged, except for the auth guards added to
-the shared learner actions and the configuration documentation noted below.
+This historical list excludes the then-uncommitted activity generation and
+Resource Studio changes. Resource Studio integration was committed in later
+checkpoints; the direct generator was removed in the 2026-09-29 worktree review.
 
 ```text
 .env.example

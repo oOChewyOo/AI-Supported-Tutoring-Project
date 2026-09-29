@@ -75,7 +75,6 @@ test('no imports and pending imports have distinct empty states with no invented
 test('existing plan page includes report in development and refuses a missing/foreign plan',async()=>{
   const plan={id:planId,student:{id:'student',name:'Fictional'},reflection:{date:'2026-09-24',whatWeCovered:'Fractions'},sessions:[],focus:'Fractions'};
   mocks['@/lib/data']={getWeeklyPlan:async()=>plan};
-  mocks['@/components/generate-activity-content-button']={GenerateActivityContentButton:()=>null};
   mocks['next/navigation']={notFound:()=>{throw Error('NOT_FOUND');}};
   const page=require('../app/plans/[id]/page.tsx').default;
   const hasReport=element=>Array.isArray(element.props.children)&&element.props.children.some(c=>c?.type?.name==='ResourceStudioPlanReport');

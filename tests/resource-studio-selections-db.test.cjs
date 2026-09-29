@@ -15,8 +15,7 @@ test('session selections in disposable in-memory PostgreSQL (not live Supabase)'
     grant execute on function auth.uid(),auth.jwt() to anon,authenticated;
     alter default privileges in schema public grant all on tables to anon,authenticated;
   `);
-  // Deliberately exclude the protected, unfinished AI-content migration.
-  for (const f of fs.readdirSync('supabase/migrations').filter(f => f.endsWith('.sql') && f !== '202607090001_activity_content_update_policy.sql').sort()) {
+  for (const f of fs.readdirSync('supabase/migrations').filter(f => f.endsWith('.sql')).sort()) {
     await db.exec(fs.readFileSync('supabase/migrations/' + f, 'utf8').replace('create extension if not exists pgcrypto;', ''));
   }
   const tutor = randomUUID(), other = randomUUID(), inactive = randomUUID();

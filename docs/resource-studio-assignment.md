@@ -66,7 +66,7 @@ snapshot and results; see the saved-attempt guide above.
 
 ## Exact local setup and verification
 
-1. Keep all unfinished work. Confirm `git branch --show-current` reports
+1. Confirm `git branch --show-current` reports
    `codex/tutor-auth-ownership`. Do not run a database reset or replay old migrations.
 2. Open **local** Supabase Studio at `http://127.0.0.1:54323`. Verify its database is
    your disposable local development instance, not a hosted project. The existing
@@ -114,9 +114,10 @@ snapshot and results; see the saved-attempt guide above.
     Run typecheck and build sequentially because they generate Next route types.
     Production-mode assignment pages and imported activity pages are unavailable.
 
-Do not run the unfinished AI generator on assigned plans. This milestone does not
-change that generator's slot-selection logic; the database rejects its attempts
-to overwrite imported slots. Its remaining uncommitted code is preserved.
+The uncommitted direct AI activity generator was removed in the 2026-09-29
+worktree review. Resource Studio owns activity authoring; see the
+[generation handoff](resource-studio-generation-handoff.md). Existing database
+guards against overwriting imported slots remain in place.
 
 To disable without deleting data, set the private settings row's `enabled` to false
 in the local administrator SQL editor. Snapshots remain saved and immutable. There
