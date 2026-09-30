@@ -17,11 +17,19 @@
 .pagination { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem; font-size: .875rem; }
 @media (max-width: 700px) { .filters { grid-template-columns: 1fr; } }
 .planner { margin-top: 1rem; }
-.selectionControls { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; margin: 1rem 0; }
+.selectionControls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: .75rem; margin: 1rem 0; }
 .selectionControls label { display: grid; gap: .5rem; }
 .selectionControls select { max-width: 100%; padding: .5rem; }
-.sessionSelections { border-top: 1px solid var(--line); padding: .75rem 0; }
-.sessionSelections h4 { margin: 0; }
-.sessionSelections ul { list-style: none; padding: 0; }
-.sessionSelections li { display: flex; justify-content: space-between; align-items: center; gap: .75rem; margin: .5rem 0; }
 .search select:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+
+/* Per-session Resource Studio selection rows (embedded inside session cards) */
+.inSessionResources { padding: .5rem 1.25rem 1rem; border-top: 1px solid var(--line); }
+.inSessionResources h3 { font-size: .875rem; }
+.inSessionResources p { color: var(--muted); font-size: .8rem; }
+.inSessionResources button:focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+.inSessionSelections { list-style: none; margin: 0; padding: 0; }
+.inSessionSelection { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; padding: .625rem .75rem; margin: .375rem 0; background: var(--card); border: 1px solid var(--line); border-radius: 7px; }
+.inSessionSelectionMeta { display: grid; gap: .15rem; margin-right: auto; min-width: 0; }
+.inSessionSelectionBadge { color: var(--green); text-transform: uppercase; letter-spacing: .1em; font-size: 9px; font-weight: 800; }
+.inSessionSelection strong { font-size: .875rem; overflow-wrap: anywhere; }
+.inSessionSelectionVersion { color: var(--muted); font-size: 10px; }

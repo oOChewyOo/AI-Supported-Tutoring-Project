@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
 import { getWeeklyPlan } from "@/lib/data";
 import { ResourceStudioPlanReport } from "@/components/resource-studio-plan-report";
 import { ResourceStudioSearch } from "@/components/resource-studio-search";
+import { PlanPageSessions } from "@/components/plan-page-sessions";
+import { ResourceStudioSessionSelections } from "@/components/resource-studio-session-planner";
 
 export default async function WeeklyPlanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -12,6 +14,31 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
 
   const activities = plan.sessions.flatMap((session) => session.activities);
   const completedActivities = activities.filter((activity) => activity.completed).length;
+
+  const isDev = process.env.NODE_ENV === "development";
+  const sessionList = (
+    <section className="weekly-session-list">
+      {plan.sessions.length ? plan.sessions.map((session) => (
+        <article className={`weekly-session ${session.completed ? "is-complete" : ""}`} key={session.id}>
+          <div className="weekly-session-heading">
+            <span className="session-index">Session {session.sessionNumber}</span>
+            <div><h2>{session.title}</h2><p><Clock3 size={14} /> {session.durationMinutes} minutes</p></div>
+            {session.completed && <span className="completion-badge"><CheckCircle2 size={14} /> Complete</span>}
+          </div>
+          <div className="weekly-activity-list">
+            {session.activities.length ? session.activities.map((activity) => (
+              <Link className={`weekly-activity ${activity.completed ? "is-complete" : ""}`} href={`/activities/${activity.id}`} key={activity.id}>
+                <span>{activity.completed ? <CheckCircle2 size={16} /> : activity.type}</span>
+                <div><strong>{activity.title}</strong><p>{activity.description}</p></div>
+                <ArrowRight size={16} />
+              </Link>
+            )) : <div className="empty-state"><h3>No activities yet</h3><p>This session does not contain any activities.</p></div>}
+          </div>
+          {isDev && <ResourceStudioSessionSelections sessionId={session.id} sessionNumber={session.sessionNumber} />}
+        </article>
+      )) : <div className="empty-state"><h3>No sessions yet</h3><p>This weekly plan does not contain any sessions.</p></div>}
+    </section>
+  );
 
   return (
     <main className="page-shell">
@@ -29,27 +56,11 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
         <div><span>What we covered</span><strong>{plan.reflection.whatWeCovered}</strong></div>
       </section>
       {process.env.NODE_ENV === "development" && <ResourceStudioPlanReport planId={plan.id} />}
-      {process.env.NODE_ENV === "development" && <ResourceStudioSearch key={plan.id} planId={plan.id} />}
-      <section className="weekly-session-list">
-        {plan.sessions.length ? plan.sessions.map((session) => (
-          <article className={`weekly-session ${session.completed ? "is-complete" : ""}`} key={session.id}>
-            <div className="weekly-session-heading">
-              <span className="session-index">Session {session.sessionNumber}</span>
-              <div><h2>{session.title}</h2><p><Clock3 size={14} /> {session.durationMinutes} minutes</p></div>
-              {session.completed && <span className="completion-badge"><CheckCircle2 size={14} /> Complete</span>}
-            </div>
-            <div className="weekly-activity-list">
-              {session.activities.length ? session.activities.map((activity) => (
-                <Link className={`weekly-activity ${activity.completed ? "is-complete" : ""}`} href={`/activities/${activity.id}`} key={activity.id}>
-                  <span>{activity.completed ? <CheckCircle2 size={16} /> : activity.type}</span>
-                  <div><strong>{activity.title}</strong><p>{activity.description}</p></div>
-                  <ArrowRight size={16} />
-                </Link>
-              )) : <div className="empty-state"><h3>No activities yet</h3><p>This session does not contain any activities.</p></div>}
-            </div>
-          </article>
-        )) : <div className="empty-state"><h3>No sessions yet</h3><p>This weekly plan does not contain any sessions.</p></div>}
-      </section>
+      {isDev ? <PlanPageSessions key={plan.id} planId={plan.id}
+        sessions={plan.sessions.map(session => ({ id: session.id, session_number: session.sessionNumber, title: session.title }))}>
+        <ResourceStudioSearch planId={plan.id} />
+        {sessionList}
+      </PlanPageSessions> : sessionList}
     </main>
   );
 }

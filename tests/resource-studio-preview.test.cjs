@@ -177,7 +177,8 @@ test('opening and closing an inline preview preserves search query, filters, res
   const React = require('react');
   const item = { id: activityId, title: 'Synthetic title', contentVersion: 7, activityType: 'multiple_choice', subject: 'Maths', yearGroup: 'Year 4', objectiveTitle: 'Fractions', tags: [] };
   const searchState = { query: { q: 'fractions', subject: 'Maths', yearGroup: 'Year 4' }, results: { items: [item], total: 11, page: 2, pageSize: 10, totalPages: 2 } };
-  const values = ['fractions', 'Maths', 'Year 4', true, null]; let cursor = 0;
+  const values = ['fractions', 'Maths', 'Year 4', null]; let cursor = 0;
+  mocks['./plan-page-sessions'] = { usePlanSelections: () => ({ fictional: true, confirm() {}, pending: false }) };
   mocks.react = { ...React, useActionState: () => [searchState, () => {}, false], useState: () => { const i = cursor++; return [values[i], value => { values[i] = value; }]; } };
   const { ResourceStudioSearch, ResourceSearchResultsView } = require('../components/resource-studio-search.tsx');
   const draw = () => { cursor = 0; return ResourceStudioSearch({ planId }); };
@@ -193,7 +194,7 @@ test('opening and closing an inline preview preserves search query, filters, res
   global.requestAnimationFrame = () => 0;
   try { panel.props.onClose(); } finally { global.requestAnimationFrame = previousRAF; }
   tree = draw(); assert.equal(flatten(tree).find(n => n.type === 'form').props.hidden, false);
-  assert.deepEqual(values, ['fractions', 'Maths', 'Year 4', true, null]);
+  assert.deepEqual(values, ['fractions', 'Maths', 'Year 4', null]);
   assert.equal(flatten(tree).find(n => n.type === ResourceSearchResultsView).props.results, searchState.results);
   assert.ok(flatten(tree).some(n => n.type === 'button' && n.props.children === 'Previous page' && n.props.value === 1));
   assert.equal(calls.length, 0);

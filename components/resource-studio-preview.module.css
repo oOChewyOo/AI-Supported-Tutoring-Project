@@ -11,3 +11,5 @@
 .feedback { padding: 16px; border-left: 4px solid var(--green); background: var(--mint); }
 .preview p, .option span { white-space: pre-wrap; overflow-wrap: anywhere; }
 @media (prefers-reduced-motion: reduce) { .preview button { transition: none; transform: none; } }
+/* Visual boundary for inline preview: makes it clear where preview content starts and ends */
+.previewBoundary { margin: 1.5rem 0; padding: clamp(.75rem, 3vw, 1.5rem); border: 1px solid var(--line); border-radius: 12px; background: var(--card); }

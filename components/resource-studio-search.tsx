@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import { searchResourceStudioAction } from "@/lib/resource-studio/search-actions";
 import type { ResourceSearchItem, ResourceSearchResults, ResourceSearchState } from "@/lib/resource-studio/search-types";
 import { ResourceStudioSessionPlanner } from "./resource-studio-session-planner";
+import { usePlanSelections } from "./plan-page-sessions";
 import styles from "./resource-studio-search.module.css";
 
 export function ResourceSearchResultsView({ results, pending, error, onPreview }: {
@@ -34,7 +35,7 @@ export function ResourceStudioSearch({ planId }: { planId: string }) {
   const [q, setQ] = useState("");
   const [subject, setSubject] = useState("");
   const [yearGroup, setYearGroup] = useState("");
-  const [fictional, setFictional] = useState(false);
+  const { fictional, confirm, pending: selectionPending } = usePlanSelections();
   const [selected, setSelected] = useState<ResourceSearchItem | null>(null);
   const normalize = (value: string) => value.trim().replace(/\s+/g, " ");
   // Edited filters start a fresh search; never paginate results from other filters.
@@ -45,7 +46,7 @@ export function ResourceStudioSearch({ planId }: { planId: string }) {
     <h2 id="resource-search-heading">Resource Studio library</h2>
     <p>Development only · Search, preview and save planning references for a fictional test student. Nothing is assigned here.</p>
     <form action={action} aria-busy={pending} hidden={Boolean(selected)}>
-      <fieldset disabled={pending}>
+      <fieldset disabled={pending || selectionPending}>
         <legend>Search filters</legend>
         <div className={styles.filters}>
           <label>Keywords<input type="search" name="q" maxLength={120} value={q} onChange={event => setQ(event.target.value)} placeholder="e.g. equivalent fractions" /></label>
@@ -53,7 +54,7 @@ export function ResourceStudioSearch({ planId }: { planId: string }) {
           <label>Year group<input name="yearGroup" maxLength={40} value={yearGroup} onChange={event => setYearGroup(event.target.value)} placeholder="e.g. Year 4" /></label>
         </div>
         <p className={styles.help}>Subject and year group match Resource Studio curriculum labels exactly. Enter topic keywords only; do not include names or personal information.</p>
-        <label className={styles.confirm}><input type="checkbox" name="fictional" value="confirmed" required checked={fictional} onChange={event => setFictional(event.target.checked)} /> This is an existing fictional test student.</label>
+        <label className={styles.confirm}><input type="checkbox" name="fictional" value="confirmed" required checked={fictional} onChange={event => confirm(event.target.checked)} /> This is an existing fictional test student.</label>
         <button className="button button-small" type="submit" name="page" value="1">{pending ? "Searching…" : "Search library"}</button>
         <ResourceSearchResultsView results={results} pending={pending} error={state.error} onPreview={setSelected} />
         {!pending && results && results.totalPages > 1 && <nav className={styles.pagination} aria-label="Library search pages">

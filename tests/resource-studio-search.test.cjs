@@ -193,6 +193,9 @@ test('initial, loading, empty and error states are distinct; stale results are h
 });
 function searchMarkup(state, fields = ['fractions', 'Maths', 'Year 4', true], pending = false) {
   const react = require('react'); let index = 0;
+  const fictional = fields[3];
+  mocks['./plan-page-sessions'] = { usePlanSelections: () => ({ fictional, confirm() {}, pending: false, sessions: [], records: {} }) };
+  fields = fields.slice(0, 3);
   mocks.react = { ...react, useActionState: () => [state, () => {}, pending], useState: initial => [index < fields.length ? fields[index++] : (typeof initial === 'function' ? initial() : initial), () => {}] };
   delete require.cache[require.resolve('../components/resource-studio-search.tsx')];
   return render(component().ResourceStudioSearch({ planId }));
@@ -220,17 +223,52 @@ test('plan keeps report, sessions and completion while adding only development s
   const page = require('../app/plans/[id]/page.tsx').default;
   const tree = await page({ params: Promise.resolve({ id: planId }) });
   const children = tree.props.children;
-  const search = children.find(c => c?.type?.name === 'ResourceStudioSearch');
+  const provider = children.find(c => c?.type?.name === 'PlanPageSessions');
+  assert.deepEqual(provider.props.sessions, [{ id: 's1', session_number: 1, title: 'Practice' }]);
+  assert.equal(provider.props.planId, planId);
+  const search = provider.props.children.find(c => c?.type?.name === 'ResourceStudioSearch');
   assert.deepEqual(search.props, { planId });
   assert.ok(children.some(c => c?.type?.name === 'ResourceStudioPlanReport'));
   function flatten(element) { return Array.isArray(element) ? element.flatMap(flatten) : element?.props ? [element, ...flatten(element.props.children)] : []; }
   const nodes = flatten(tree);
+  const card = nodes.find(n => n.type === 'article');
+  const selections = flatten(card).find(n => n.type?.name === 'ResourceStudioSessionSelections');
+  assert.deepEqual(selections.props, { sessionId: 's1', sessionNumber: 1 });
   assert.ok(nodes.some(n => n.props.href === '/activities/a1'));
   assert.ok(nodes.some(n => n.props.children === 'Existing task'));
   assert.ok(nodes.some(n => n.props.className === 'completion-badge'));
   process.env.NODE_ENV = 'production';
-  assert.ok(!(await page({ params: Promise.resolve({ id: planId }) })).props.children.some(c => c?.type?.name === 'ResourceStudioSearch'));
+  const production = flatten(await page({ params: Promise.resolve({ id: planId }) }));
+  assert.ok(!production.some(c => ['ResourceStudioSearch', 'PlanPageSessions', 'ResourceStudioSessionSelections'].includes(c.type?.name)));
+  assert.ok(production.some(n => n.props.href === '/activities/a1'));
   mocks['@/lib/data'].getWeeklyPlan = async () => null;
   await assert.rejects(() => page({ params: Promise.resolve({ id: planId }) }), /NOT_FOUND/);
   assert.equal(fetches.length, 0);
+});
+
+
+test('five server-rendered cards retain all fifteen legacy links and map selection lists to the matching sessions', async () => {
+  const sessions = Array.from({ length: 5 }, (_, i) => ({
+    id: 's' + (i + 1), sessionNumber: i + 1, title: 'Session title', durationMinutes: 15, completed: false,
+    activities: Array.from({ length: 3 }, (_, j) => ({ id: 'a' + i + j, title: 'Legacy task', description: 'Practice',
+      completed: i === 0 && j === 0, type: 'Topic practice', contentJson: { privateSentinel: 'not-a-client-prop' } }))
+  }));
+  mocks['@/lib/data'] = { getWeeklyPlan: async () => ({ id: planId, student: { id: 'student', name: 'Fictional' },
+    reflection: { date: '2026-09-30', whatWeCovered: 'Fractions' }, focus: 'Fractions', sessions }) };
+  const tree = await require('../app/plans/[id]/page.tsx').default({ params: Promise.resolve({ id: planId }) });
+  const flatten = value => Array.isArray(value) ? value.flatMap(flatten) : value?.props ? [value, ...flatten(value.props.children)] : [];
+  const nodes = flatten(tree), cards = nodes.filter(n => n.type === 'article');
+  assert.equal(cards.length, 5);
+  cards.forEach((card, i) => {
+    const children = flatten(card);
+    assert.equal(children.filter(n => n.props.href?.startsWith('/activities/')).length, 3);
+    const lists = children.filter(n => n.type?.name === 'ResourceStudioSessionSelections');
+    assert.equal(lists.length, 1); assert.deepEqual(lists[0].props, { sessionId: 's' + (i + 1), sessionNumber: i + 1 });
+  });
+  const completion = nodes.find(n => n.props.className === 'completion-badge');
+  assert.ok(completion.props.children.includes(1)); assert.ok(completion.props.children.includes(15));
+  const provider = nodes.find(n => n.type?.name === 'PlanPageSessions');
+  assert.deepEqual(provider.props.sessions, sessions.map(s => ({ id: s.id, session_number: s.sessionNumber, title: s.title })));
+  assert.equal(nodes.filter(n => n.type?.name === 'ResourceStudioSearch').length, 1);
+  assert.ok(!nodes.some(n => n.props.children === 'Session planning references'));
 });

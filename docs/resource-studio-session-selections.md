@@ -4,7 +4,7 @@ This development-only backend adds planning references alongside the existing
 three activity slots. It does not assign activities or create learner results,
 attempts, completions, or exercise routes.
 
-The weekly-plan Resource Studio section now loads session planning references
+The weekly plan now loads session planning references
 after the existing fictional-student confirmation. A successful inline preview
 offers a session picker and Add to session, passing the validated preview's ID
 and exact version to the existing add action. The server still re-fetches the
@@ -12,13 +12,20 @@ publication before saving. Existing identical selections show Already selected;
 another selected version requires removal first. Action failures retain the
 current list and show a sanitized error.
 
-Selected resources appear under session headings within the library section,
-with title, version and Remove. These planning references are separate from
-ordinary activity cards and do not create learner assignments.
+Selected resources appear inside the matching main weekly-session cards, with
+title, version and Remove, alongside the unchanged three legacy activity slots.
+There is no separate five-session planning-reference display. These are still
+planning references and do not create learner assignments or affect progress.
+The server-rendered page supplies minimal session options to one client provider;
+cards and preview controls share selection records. Existing list actions run
+only after fictional confirmation. Successful add/remove responses update the
+affected session directly; list errors offer a working retry. Reload requires
+confirmation again before persisted selections are shown.
 Closing the preview preserves search filters, pagination and results. No extra
-confirmation dialog is added. The read-only session-options action authenticates
-the tutor and validates plan ownership before returning only session identifiers,
-numbers and titles; list/add/remove use the existing selection actions.
+confirmation dialog is added. The existing session-options action remains
+available, but the page no longer needs an additional options fetch. Its owned
+plan loader supplies identifiers, numbers and titles; list/add/remove continue
+using the unchanged authenticated selection actions.
 
 `listResourceSessionSelections`, `addResourceSessionSelection`, and
 `removeResourceSessionSelection` require a fresh active tutor session, an owned
@@ -26,7 +33,8 @@ plan, a session belonging to that plan, and explicit fictional-student
 confirmation. The new RPCs independently enforce the same hierarchy and the
 existing disabled-by-default Resource Studio database setting. No service-role
 client is used. The migration depends on the existing tutor-ownership and
-Resource Studio assignment migrations and has not been deployed.
+Resource Studio assignment migrations. It has been exercised in the isolated
+synthetic local database, but not deployed to a real hosted/production database.
 
 Add re-fetches the exact published version through the existing authenticated,
 server-only integration adapter. Only its ID, version and validated title are
