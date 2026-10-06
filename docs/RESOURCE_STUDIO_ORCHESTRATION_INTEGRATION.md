@@ -56,6 +56,25 @@ Learner identity/access, safe per-type presentation, private answer checking,
 manual/hybrid review, media access and outstanding central acknowledgements remain
 separate work. No source orchestration, publication or provenance design changed.
 
+### Live approval verification — 2026-10-06
+
+Completed from committed PL `2be74f8e8fc3447f8a416327565b71ae565ef962` and RS
+`42604a02cc8ba6367d4894ddd57233480738d8b0`, with no product-code fix. In the real
+PL tutor UI, the existing fictional equivalent-fractions proposal (Arithmetic Input,
+then Spot Mistake) was reviewed and approved into Session 2. One batch and two
+ordered assignments were persisted. Both durable previews rendered before and
+after restarting both canonical apps, with the transient proposal gone. No source
+labels appeared. Legacy rows, manual selections, attempts, results, progress and
+RS public activities/versions retained their exact counts and content digests.
+See the [handoff proof](AI_DEVELOPMENT_HANDOFF.md#live-approval-and-restart-proof-completed--2026-10-06)
+for package/assignment IDs and exact before/after counts.
+
+The existing synthetic PL credential was verified against the loopback CLI/runtime,
+used only in the canonical server process environment under explicit user permission,
+and removed by stopping that test process afterward. It was never persisted; logs
+and client bundles were checked for absence. Future local assignment operations
+require the server credential to be supplied again; durable data is unaffected.
+
 The following sections document the earlier foundation and review-only checkpoints.
 
 ## Durable package foundation — 2026-10-06

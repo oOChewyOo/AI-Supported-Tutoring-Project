@@ -39,52 +39,80 @@ Commit title: `Approve Resource Studio proposals into weekly sessions`. Resolve
 with `git log -1 --format="%H %s" -- lib/resource-studio/approval-actions.ts`.
 No push.
 
-### Live proof status: blocked on local server credential authorization
+### Live approval and restart proof completed — 2026-10-06
 
-Canonical apps are running on loopback 3100/3101 against the existing isolated
-synthetic databases. The real browser opened **Fictional Student — Local Lab**,
-plan `08dd2f29-f49c-450d-ad92-d4089cb0e9fe`, and displayed the new proposal controls.
-The PL runtime lacks a service-role credential, so the approved-practice read
-correctly fails closed. Automatic approval review rejected inspecting the local
-synthetic container to locate that credential; explicit user approval was requested.
-No workaround was attempted. No live Build/Approve was submitted, target session
-chosen, package materialised or new session assignment created in this checkpoint.
-The all-11 approval, persistence, durable retry and preview-expiry behaviors are
-covered offline; **real cross-app approval/restart proof remains pending**.
+Continued from clean PL `2be74f8e8fc3447f8a416327565b71ae565ef962` and RS
+`42604a02cc8ba6367d4894ddd57233480738d8b0` (only its known unrelated
+`.env.example` modification). No integration bug or product-code fix was needed.
+The earlier credential-authorization blocker is resolved for this test.
 
-Before/after counts and whole-row aggregate digests are identical (after applying
-only the additive schema migration):
+The user explicitly authorized the existing synthetic PL service credential.
+Verified named PL containers bind only to loopback 56321/56322; the existing local
+CLI's API URL exactly matched the existing PL runtime's synthetic URL. The
+credential was privately obtained through that CLI and injected only into the
+canonical PL server process environment, never copied into source/configuration.
+All four test logs and generated client JS bundles were privately checked: the
+credential was absent. After proof, the credential-bearing test process was stopped
+and the original PL environment restored. No new credential copy was persisted.
+Future live reads/approvals need another authorized process-only injection or a
+separately configured local server credential; this is runtime setup, not lost data.
 
-| Synthetic table | Before → after | Unchanged content digest (MD5) |
+The real PL tutor browser built the stored equivalent-fractions learning need for
+**Fictional Student — Local Lab**, plan `08dd2f29-f49c-450d-ad92-d4089cb0e9fe`.
+Both actual proposal previews were reviewed. The complete ready proposal used
+10 requested minutes, 9 planned including transitions and 1 minute headroom;
+planning mode was deterministic fallback. The tutor selected **Session 2 — Build
+confidence**, ID `2069bdc5-9cfe-49eb-a242-1d66f6dfc19c`, and clicked **Approve
+practice** once in PL. UI transitioned to **Approved / Assigned to Session 2**.
+
+Approval batch: `5f645856-dfdf-428f-9658-35091146dbc1`.
+
+| Order | Activity | Dose / duration | Immutable RS package | PL session assignment |
+| --- | --- | --- | --- | --- |
+| 1 | Arithmetic Input | 6 questions / 4 minutes | `59eff900-4e60-4360-86a3-e540dfc95516` | `70643efd-f306-4b64-b94b-8413d9bb4ce0` |
+| 2 | Spot Mistake | 2 examples / 4 minutes | `c40d63fb-cbac-46d4-946d-5867522442f1` | `356b25d0-1ba8-4352-969c-3d641511028c` |
+
+Both package content versions are 1, with private RS provenance retained. Session
+cards showed educational type, purpose, dose, minutes, Assigned status and Preview,
+in the same order. No source/provider/provenance labels appeared in either proposal,
+assignment cards or rendered tutor previews. Both durable previews rendered via
+`/integrations/practice-loop/package-review` before and after restarting **both**
+canonical app processes. The transient PL proposal disappeared on reload; saved
+assignments remained and fresh durable preview requests still worked. No proposal
+was rebuilt after restart. All post-approval database digests matched after restart.
+
+| Synthetic table | Before → after | Final whole-row aggregate MD5 |
 | --- | --- | --- |
 | PL weekly plans | 1 → 1 | `7e0a7d90374971e0ac05925b51c8a9dd` |
 | PL weekly sessions | 5 → 5 | `b33d4fd8cfb8be69f070b7dc26efe6e2` |
 | PL legacy activities | 15 → 15 | `d2238f0a3829b7dddfb47bda60dc95e4` |
 | PL manual selections | 2 → 2 | `eb5c69c129c394bbe40bda44e379f934` |
-| PL prepared references | 2 → 2 | `9f6d0d1427efaad74821c44040310f3e` |
-| PL approval batches | 0 → 0 | `d41d8cd98f00b204e9800998ecf8427e` |
-| PL session package assignments | 0 → 0 | `d41d8cd98f00b204e9800998ecf8427e` |
+| PL prepared references | 2 → 4 | `078a7acf0dd3b728c9b4b574465fb6db` |
+| PL approval batches | 0 → 1 | `52fe20addff43f7320bd918eff0bdace` |
+| PL session package assignments | 0 → 2 | `fc3ae29b25072e8d83782efdb250b507` |
 | PL legacy assignments / attempts / results (each) | 0 → 0 | `d41d8cd98f00b204e9800998ecf8427e` |
 | RS public activities | 2 → 2 | `fbe5e80b210d44a44cf860c1e3e0687a` |
 | RS activity versions | 10 → 10 | `401a7cf1743433a6298d9e2c4cf9ff23` |
-| RS private packages | 2 → 2 | `3c338f188cf805b299b0a3ba48bcaf14` |
-| RS private provenance | 2 → 2 | `3c18c9d04a20bc283fafcbe89ae0f30f` |
+| RS private packages | 2 → 4 | `6e765f25bf39aa1db08a686cb44eb551` |
+| RS private provenance | 2 → 4 | `652edcfdbb896880ccaaf0ac79cdf485` |
 
-Resource Studio's narrow preview endpoint/shell checkpoint is
-`42604a02cc8ba6367d4894ddd57233480738d8b0` on `main`, starting at
-`95d64b68dec6d1cc00ec2558c8c1933a4b5823fb`. Its 40 focused tests, typecheck,
-lint and scoped whitespace checks pass; full RS suite not rerun because shared
-package/provenance code is untouched. Known unrelated `.env.example` remains dirty.
-No push. No source orchestration, source adapter, rights or publication changes.
+All rows with unchanged counts also retained their exact pre-test digests. Existing
+RS package/provenance rows separately retained their prior digests
+`3c338f188cf805b299b0a3ba48bcaf14` / `3c18c9d04a20bc283fafcbe89ae0f30f`.
+Progress remained **0 of 15**; no attempt, completion or public publication occurred.
+Only the intended approval batch, references, assignments and RS private packages /
+provenance were added. No migration was added or reapplied during this continuation.
 
-Next: finish the requested live UI approval, verify exact ordered package/assignment
-IDs, restart proposal processes and prove durable previews, then repeat these
-aggregate comparisons. After that, the assignment/provenance boundary supports a
-separate authenticated learner-safe all-11 delivery milestone. Outstanding work:
-learner identity/access, safe per-type presentation (the tutor renderer contains
-educational answers), answer checking/manual/hybrid review, media access and
-central acknowledgements before real delivery. No learner delivery is claimed here.
+The implementation's 250 PL tests and 40 focused RS tests, typecheck and lint remain
+the code baseline checks. This continuation changed only verification documentation;
+diff, link, scope and secret-pattern checks were run, without redundant app tests.
+No push. PL is clean after its documentation commit; RS preserves `.env.example`.
 
+Next: authenticated learner-safe all-11 delivery can build on these assignment and
+provenance contracts. Still needed: learner identity/access, safe per-type payloads
+(the tutor renderer exposes educational answers), answer checking/manual/hybrid
+review, audited media access and central acknowledgements before real delivery.
+Learner interaction/completion/scoring remains explicitly outside this checkpoint.
 
 ## Latest checkpoint — durable RS package references, 2026-10-06
 
