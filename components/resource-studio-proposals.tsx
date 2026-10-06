@@ -4,26 +4,28 @@ import { useRef, useState } from "react";
 import { buildPracticeProposalAction, previewPracticeProposalAction } from "@/lib/resource-studio/proposal-actions";
 import { proposalIntents, type ObjectiveChoice } from "@/lib/resource-studio/proposal-contract";
 import type { TutorProposal } from "@/lib/resource-studio/proposal-store";
+import { approvePracticeProposal } from "@/lib/resource-studio/approval-actions";
+import { useApprovedPractice } from "./resource-studio-approved-practice";
 import styles from "./resource-studio-search.module.css";
 
 const label = (value: string) => value.replaceAll("_", " ").replaceAll("-", " ");
-export function ProposalReview({ proposal, onPreview, pending }: { proposal: TutorProposal; onPreview: (id: string) => void; pending: boolean }) {
+export function ProposalReview({ proposal, onPreview, pending, assignedSession }: { assignedSession?: string; proposal: TutorProposal; onPreview: (id: string) => void; pending: boolean }) {
   return <div><h3>Resource Studio proposal</h3>
-    <p><strong>Review only — not assigned to learner.</strong></p>
+    <p><strong>{assignedSession ? `Approved / Assigned to ${assignedSession}` : "Review only — not assigned to learner."}</strong></p>
     <p>{proposal.objective}</p>
     <p>{proposal.requestedMinutes} minutes requested · {proposal.plannedMinutes} planned including transitions · {proposal.headroomMinutes} minutes headroom · {proposal.activities.length} activities</p>
     <p>Status: {proposal.status} · Planning: {label(proposal.planningMode)}</p>
     <ol className={styles.results}>{proposal.activities.map(activity => <li key={activity.id}>
       <h4>{label(activity.activityType)}</h4><p>{label(activity.purpose)} · {activity.dose} · {activity.estimatedMinutes} minutes</p>
       {activity.status === "failed" ? <p role="alert">Failed to prepare — {activity.failureReason}</p> : <>
-        <p>Ready for review</p><button className="button button-small button-secondary" type="button" disabled={pending || !activity.previewAvailable}
+        <p>{assignedSession ? "Assigned" : "Ready for review"}</p><button className="button button-small button-secondary" type="button" disabled={pending || Boolean(assignedSession) || !activity.previewAvailable}
           onClick={() => onPreview(activity.id)}>Preview {label(activity.activityType)}</button></>}
     </li>)}</ol>
-    <p>Review expires after 30 minutes or an app restart. Rebuild to request a fresh proposal.</p>
+    {assignedSession ? <p>Use Preview in the selected session to review the durable assigned activity.</p> : <p>Review expires after 30 minutes or an app restart. Rebuild to request a fresh proposal.</p>}
   </div>;
 }
-export function ResourceStudioProposals({ planId, objectives, subject: initialSubject, year: initialYear }: {
-  planId: string; objectives: ObjectiveChoice[]; subject: string; year: string;
+export function ResourceStudioProposals({ planId, objectives, subject: initialSubject, year: initialYear, sessions = [] }: {
+  planId: string; objectives: ObjectiveChoice[]; subject: string; year: string; sessions?: { id: string; sessionNumber: number; title: string }[];
 }) {
   const [objective, setObjective] = useState(objectives[0]?.key ?? "");
   const [subject, setSubject] = useState(initialSubject), [year, setYear] = useState(initialYear);
@@ -33,6 +35,21 @@ export function ResourceStudioProposals({ planId, objectives, subject: initialSu
   const [proposal, setProposal] = useState<TutorProposal>(), [error, setError] = useState("");
   const [preview, setPreview] = useState("");
   const revision = useRef(0);
+  const { assignments, update } = useApprovedPractice();
+  const [sessionId, setSessionId] = useState("");
+  const [approving, setApproving] = useState(false);
+  const assigned = assignments.find(row => row.proposalId === proposal?.id && row.sessionId === sessionId);
+  const assignedSession = assigned ? `Session ${sessions.find(s => s.id === assigned.sessionId)?.sessionNumber}` : undefined;
+  async function approve() {
+    if (!proposal || pending || approving) return;
+    const current = revision.current; setApproving(true); setError(""); setPreview("");
+    try {
+      const result = await approvePracticeProposal(planId, sessionId, proposal.id, confirmed);
+      if (result.assignments) update(result.assignments);
+      if (current === revision.current) setError(result.error ?? "");
+    } catch { if (current === revision.current) setError("Could not approve practice. Retry."); }
+    finally { setApproving(false); }
+  }
   async function build() {
     const current = ++revision.current; setPending(true); setError(""); setPreview("");
     try {
@@ -53,11 +70,11 @@ export function ResourceStudioProposals({ planId, objectives, subject: initialSu
     } catch { if (current === revision.current) setError("Preview unavailable. Try again."); }
     finally { if (current === revision.current) setPending(false); }
   }
-  return <section className={styles.search} aria-label="Automatic practice proposal" aria-busy={pending}>
+  return <section className={styles.search} aria-label="Automatic practice proposal" aria-busy={pending || approving}>
     <h2>Build practice from a learning need</h2>
-    <p>Resource Studio chooses activities and sources automatically. Review the proposal before any future assignment.</p>
+    <p>Resource Studio chooses activities and sources automatically. Review the proposal, then approve it into one session.</p>
     {!objectives.length ? <p>Extract and review objectives for this plan&apos;s reflection first.</p> : <>
-      <fieldset disabled={pending}><legend>Practice need</legend>
+      <fieldset disabled={pending || approving}><legend>Practice need</legend>
         <label>Stored objective <select value={objective} onChange={event => { setObjective(event.target.value); setConfirmed(false); setProposal(undefined); setPreview(""); }}>
           {objectives.map(choice => <option key={choice.key} value={choice.key}>{choice.label}: {choice.objective}</option>)}
         </select></label>
@@ -74,12 +91,19 @@ export function ResourceStudioProposals({ planId, objectives, subject: initialSu
       <label className={styles.confirm}><input type="checkbox" checked={confirmed} onChange={event => {
         setConfirmed(event.target.checked); revision.current++; setPending(false); setProposal(undefined); setPreview(""); setError("");
       }} />This is fictional test data and these educational fields contain no personal information. I permit automatic source use and generation for this review.</label>
-      <button type="button" className="button" disabled={pending || !confirmed || !objective || !subject.trim() || !year.trim() || !intents.length || Number(duration) < 3 || Number(duration) > 30}
+      <button type="button" className="button" disabled={pending || approving || !confirmed || !objective || !subject.trim() || !year.trim() || !intents.length || Number(duration) < 3 || Number(duration) > 30}
         onClick={() => void build()}>{pending ? "Preparing practice…" : proposal ? "Rebuild practice" : "Build practice proposal"}</button>
       {pending && <p role="status">Preparing review. This may take up to four minutes.</p>}
     </>}
     {error && <p role="alert">{error}</p>}
-    {confirmed && proposal && <ProposalReview proposal={proposal} pending={pending} onPreview={id => void openPreview(id)} />}
+    {confirmed && proposal && <><ProposalReview proposal={proposal} pending={pending || approving} assignedSession={assignedSession} onPreview={id => void openPreview(id)} />
+      {proposal.status !== "ready" ? <p role="alert">Rebuild the proposal before assigning it.</p> : <div>
+        <label>Assign approved practice to: <select aria-label="Target session" value={sessionId} disabled={approving} onChange={event => setSessionId(event.target.value)}>
+          <option value="">Choose a session</option>{sessions.map(session => <option key={session.id} value={session.id}>Session {session.sessionNumber}: {session.title}</option>)}
+        </select></label>
+        <button type="button" className="button" disabled={pending || approving || !sessionId || Boolean(assigned)} onClick={() => void approve()}>
+          {approving ? "Approving practice…" : assigned ? "Approved" : "Approve practice"}</button>
+      </div>}</>}
     {confirmed && preview && <div><button type="button" className="button button-secondary" onClick={() => setPreview("")}>Close preview</button>
       <iframe key={preview} title="Resource Studio activity review" src={preview} referrerPolicy="no-referrer" sandbox="allow-scripts allow-same-origin"
         style={{ width: "100%", height: "700px", border: "1px solid var(--line)", marginTop: "1rem" }} />

@@ -1,4 +1,62 @@
-# Automatic Resource Studio proposals: tutor review only
+# Resource Studio proposals and durable session approval
+
+## Tutor approval checkpoint — 2026-10-06
+
+One complete successful proposal is approved into one tutor-selected existing
+session. The five sessions, three legacy activity slots per session, manual
+selections and existing progress calculations remain unchanged. Partial proposals
+require rebuilding. No learner interaction, completion or scoring is implemented.
+
+`approvePracticeProposal` resolves the tutor/plan-bound server proposal, including
+its retained objective key. The browser supplies only plan, session, proposal and
+fictional confirmation; the proposal/session identity is the approval key. It
+cannot supply content, package references, ordering or rights. Ownership and
+session membership are checked before RS calls and again inside SQL at commit.
+
+Each item uses a deterministic namespaced UUID derived from the RS proposal and
+item identity for authenticated materialisation. Strict all-11 package metadata is
+validated. Only after every item succeeds does one service-only RPC atomically
+ensure immutable prepared references, insert the approval batch and insert ordered
+session assignments. A failed transaction creates no visible half-approved set.
+RS packages may safely remain unassigned; retry reuses their materialisation keys.
+Unique session/proposal identities prevent duplicate clicks and concurrent retries.
+The durable lookup precedes proposal-cache lookup, so retry after a successful
+commit works even after proposal expiry/restart. An incomplete approval still
+requires the PL proposal cache and valid RS materialisation state; if unavailable,
+rebuild rather than inventing lost proposal content.
+
+Migration: `20261006200000_resource_proposal_approval.sql`. New private tables:
+`resource_approval_batches` and `resource_session_assignments`. Both have forced
+RLS, no client table grants, immutable rows, foreign keys and constrained positions.
+The server-only RPC independently checks active tutor, student/reflection ownership,
+plan/session membership and the existing development integration feature flag.
+`SUPABASE_SERVICE_ROLE_KEY` is needed only by the isolated server service client;
+ordinary authentication continues using the session/RLS client. Never expose or
+commit this credential. No hosted database migration is implied.
+
+PL stores exact opaque package/activity/release/version/integrity references plus
+educational purpose, dose and duration. It stores no activity body, answers,
+provider, source URLs, rights or provenance. Normal tutor DTOs additionally omit
+package integrity and internal references; cards show type, purpose, dose, minutes,
+Assigned status and Preview. New assignments do not feed legacy reports or links.
+
+RS adds `/api/integrations/practice-loop/package-preview`: server-authenticated
+POST verifies the exact package/integrity and issues a ten-minute signed capability.
+GET accepts that capability and reads the immutable package from durable storage.
+The `/integrations/practice-loop/package-review` shell keeps the capability in a
+fragment, removes it from history and uses the existing RS renderers and source-blind
+tutor projection. Educational answers/feedback are appropriate within this tutor
+preview; this is not a learner-safe content API. No provenance or author notes cross
+it. Restart does not invalidate a capability while the integration key remains
+unchanged, and PL can request a new one without any proposal review state.
+
+Next: authenticated learner-safe delivery for all 11 types, then completion and
+scoring. Do not reuse the answer-bearing tutor renderer contract for learners.
+Learner identity/access, safe per-type presentation, private answer checking,
+manual/hybrid review, media access and outstanding central acknowledgements remain
+separate work. No source orchestration, publication or provenance design changed.
+
+The following sections document the earlier foundation and review-only checkpoints.
 
 ## Durable package foundation — 2026-10-06
 

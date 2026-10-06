@@ -1,3 +1,4 @@
+import { ApprovedPracticeProvider, ApprovedSessionPractice } from "@/components/resource-studio-approved-practice";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
@@ -39,6 +40,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
               </Link>
             )) : <div className="empty-state"><h3>No activities yet</h3><p>This session does not contain any activities.</p></div>}
           </div>
+          {isDev && <ApprovedSessionPractice planId={plan.id} sessionId={session.id} />}
           {isDev && <ResourceStudioSessionSelections sessionId={session.id} sessionNumber={session.sessionNumber} />}
         </article>
       )) : <div className="empty-state"><h3>No sessions yet</h3><p>This weekly plan does not contain any sessions.</p></div>}
@@ -46,7 +48,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
   );
 
   return (
-    <main className="page-shell">
+    <ApprovedPracticeProvider key={plan.id} planId={plan.id} enabled={isDev}><main className="page-shell">
       <Link href={`/students/${plan.student.id}`} className="back-link"><ArrowLeft size={15} /> Back to {plan.student.name}</Link>
       <div className="plan-heading">
         <div>
@@ -61,12 +63,12 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
         <div><span>What we covered</span><strong>{plan.reflection.whatWeCovered}</strong></div>
       </section>
       {process.env.NODE_ENV === "development" && <ResourceStudioPlanReport planId={plan.id} />}
-      {isDev && <ResourceStudioProposals key={plan.id} planId={plan.id} objectives={objectives} subject={plan.student.subjectFocus} year={plan.student.yearGroup} />}
+      {isDev && <ResourceStudioProposals key={plan.id} planId={plan.id} sessions={plan.sessions.map(s => ({ id: s.id, sessionNumber: s.sessionNumber, title: s.title }))} objectives={objectives} subject={plan.student.subjectFocus} year={plan.student.yearGroup} />}
       {isDev ? <PlanPageSessions key={plan.id} planId={plan.id}
         sessions={plan.sessions.map(session => ({ id: session.id, session_number: session.sessionNumber, title: session.title }))}>
         <ResourceStudioSearch planId={plan.id} />
         {sessionList}
       </PlanPageSessions> : sessionList}
-    </main>
+    </main></ApprovedPracticeProvider>
   );
 }

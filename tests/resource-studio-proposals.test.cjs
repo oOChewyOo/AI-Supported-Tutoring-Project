@@ -128,6 +128,7 @@ test('review renders educational metadata, partial failure and preview without s
 });
 
 test('tutor form uses stored objective, shows loading, completes review, and ignores results after confirmation withdrawal', async () => {
+  mocks['./resource-studio-approved-practice'] = { useApprovedPractice: () => ({ assignments: [], update: () => {} }) };
   const react = require('react'); const slots = []; let cursor = 0; const revision = { current: 0 };
   mocks.react = { ...react, useRef: () => revision, useState(initial) { const i = cursor++; if (!(i in slots)) slots[i] = initial;
     return [slots[i], value => { slots[i] = typeof value === 'function' ? value(slots[i]) : value; }]; } };
@@ -150,4 +151,47 @@ test('tutor form uses stored objective, shows loading, completes review, and ign
   finish({ proposal }); await new Promise(setImmediate); assert.match(html(), /Resource Studio proposal/); assert.match(html(), /Rebuild practice/);
   button().props.onClick(); confirm().props.children[0].props.onChange({ target: { checked: false } });
   finish({ proposal }); await new Promise(setImmediate); assert.doesNotMatch(html(), /Ready for review|Preview arithmetic/);
+});
+
+
+test('ready proposal selects a real session, approves with loading state, then shows assigned and durable session cards', async () => {
+  const react = require('react'), slots = []; let cursor = 0, assignments = [], finish;
+  const revision = { current: 0 };
+  mocks.react = { ...react, useRef: () => revision, useState(initial) { const i=cursor++; if (!(i in slots)) slots[i]=initial; return [slots[i],v=>{slots[i]=typeof v==='function'?v(slots[i]):v;}]; } };
+  mocks['./resource-studio-approved-practice'] = { useApprovedPractice: () => ({ assignments, update: rows => { assignments=rows; } }) };
+  const ready = structuredClone(fixture.response);ready.status='ready';ready.activities[1].status='ready';ready.activities[1].previewToken='b'.repeat(64);delete ready.activities[1].failureReason;
+  const proposal = require('../lib/resource-studio/proposal-store.ts').retainProposal('t','p',contract().parsePracticeProposal(ready));
+  mocks['@/lib/resource-studio/proposal-actions']={buildPracticeProposalAction:async()=>({proposal})};
+  let received;
+  mocks['@/lib/resource-studio/approval-actions']={approvePracticeProposal:(...args)=>{received=args;return new Promise(resolve=>{finish=resolve;});}};
+  const Component=require('../components/resource-studio-proposals.tsx').ResourceStudioProposals;
+  const session='33333333-3333-4333-8333-333333333333';
+  const props={planId,objectives:[{key:'focus_for_next_week:0',label:'focus',objective:'Fractions'}],subject:'Maths',year:'5',sessions:[{id:session,sessionNumber:2,title:'Build confidence'}]};
+  const tree=()=>{cursor=0;return Component(props);};
+  const flatten=n=>Array.isArray(n)?n.flatMap(flatten):n?.props?[n,...flatten(n.props.children)]:[];
+  const nodes=()=>flatten(tree());
+  const button=text=>nodes().find(n=>n.type==='button'&&n.props.children===text);
+  nodes().find(n=>n.type==='input'&&n.props.type==='number').props.onChange({target:{value:'10'}});
+  nodes().find(n=>n.type==='label'&&n.props.children?.[1]==='fluency').props.children[0].props.onChange({target:{checked:true}});
+  nodes().find(n=>n.type==='label'&&String(n.props.children?.[1]).startsWith('This is fictional')).props.children[0].props.onChange({target:{checked:true}});
+  button('Build practice proposal').props.onClick();await new Promise(setImmediate);
+  assert.equal(button('Approve practice').props.disabled,true);
+  nodes().find(n=>n.props['aria-label']==='Target session').props.onChange({target:{value:session}});
+  assert.equal(button('Approve practice').props.disabled,false);button('Approve practice').props.onClick();assert.equal(button('Approving practice…').props.disabled,true);
+  assert.deepEqual(received,[planId,session,proposal.id,true]);
+  finish({assignments:[{id:'assigned',proposalId:proposal.id,sessionId:session,activityType:'arithmetic_input',purpose:'fluency',dose:'6 questions',estimatedMinutes:4,status:'assigned'}]});await new Promise(setImmediate);
+  assert.equal(button('Approved').props.disabled,true);
+  const html=require('react-dom/server').renderToStaticMarkup(tree());assert.match(html,/Approved \/ Assigned to Session 2/);assert.doesNotMatch(html,/Twinkl|Oak|Math Salamanders|provenance|sourceUrl|attribution/);
+  const page=fs.readFileSync('app/plans/[id]/page.tsx','utf8');assert.match(page,/<ApprovedSessionPractice planId=\{plan.id\} sessionId=\{session.id\}/);
+  const cards=fs.readFileSync('components/resource-studio-approved-practice.tsx','utf8');assert.match(cards,/previewApprovedPractice\(planId, id\)/);assert.doesNotMatch(cards,/previewPracticeProposalAction|href=/);
+});
+
+test('approved session card renders only educational metadata and durable preview controls', () => {
+  const react=require('react');
+  mocks.react={...react,useContext:()=>({assignments:[{id:'a',sessionId:'s2',activityType:'arithmetic_input',purpose:'fluency',dose:'6 questions',estimatedMinutes:4,status:'assigned'}]})};
+  const {ApprovedSessionPractice}=require('../components/resource-studio-approved-practice.tsx');
+  const html=require('react-dom/server').renderToStaticMarkup(react.createElement(ApprovedSessionPractice,{planId,sessionId:'s2'}));
+  assert.match(html,/arithmetic input/);assert.match(html,/6 questions/);assert.match(html,/4 minutes/);assert.match(html,/Assigned — learner delivery pending/);assert.match(html,/Preview arithmetic input/);
+  assert.doesNotMatch(html,/Twinkl|Oak|Math Salamanders|provider|sourceUrl|attribution|provenance|licence|license|sourceItemIds|hashes|href=/);
+  assert.equal(require('react-dom/server').renderToStaticMarkup(react.createElement(ApprovedSessionPractice,{planId,sessionId:'s1'})),'');
 });

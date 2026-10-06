@@ -5,9 +5,10 @@ capabilities; see [the factual handoff](AI_DEVELOPMENT_HANDOFF.md).
 
 2026-10-06 checkpoint: one structured PL learning need now invokes automatic RS
 orchestration and returns a complete tutor-review proposal with all-type RS
-previews. This does not sequence the five-session week or assign activities.
-Next: tutor approval, durable source provenance/attribution and immutable
-all-type learner delivery, then completion/scoring/progress. The historical order
+previews. The original proposal checkpoint did not sequence or assign the week.
+The 2026-10-06 approval checkpoint adds whole-proposal approval into one selected
+existing session using durable RS packages. Learner delivery remains pending.
+Next: immutable all-type learner delivery, then completion/scoring/progress. The historical order
 below predates RS orchestration; do not reimplement its content engine in PL.
 
 > Practice Loop proposes the week; the tutor reviews it.

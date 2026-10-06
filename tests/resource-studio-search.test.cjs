@@ -222,7 +222,7 @@ test('plan keeps report, sessions and completion while adding only development s
   mocks['next/navigation'] = { notFound: () => { throw Error('NOT_FOUND'); } };
   const page = require('../app/plans/[id]/page.tsx').default;
   const tree = await page({ params: Promise.resolve({ id: planId }) });
-  const children = tree.props.children;
+  const children = tree.props.children.props.children;
   const provider = children.find(c => c?.type?.name === 'PlanPageSessions');
   assert.deepEqual(provider.props.sessions, [{ id: 's1', session_number: 1, title: 'Practice' }]);
   assert.equal(provider.props.planId, planId);

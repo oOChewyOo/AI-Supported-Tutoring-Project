@@ -25,7 +25,7 @@ export async function buildPracticeProposalAction(planId: string, objectiveKey: 
     const proposal = await requestPracticeProposal(need);
     // Re-check ownership after a potentially long remote call.
     await assertOwnedResourcePlan(planId, tutor);
-    return { proposal: retainProposal(tutor.user.id, planId, proposal) };
+    return { proposal: retainProposal(tutor.user.id, planId, proposal, objectiveKey) };
   } catch (error) {
     return { error: error instanceof ResourceStudioError ? error.message : "Could not build practice. Check the objective, subject, year, duration and intents, then try again." };
   } finally { if (busyKey) proposalBusy.delete(busyKey); }

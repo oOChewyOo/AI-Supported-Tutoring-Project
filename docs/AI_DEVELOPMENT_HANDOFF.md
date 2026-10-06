@@ -1,4 +1,90 @@
 # Practice Loop: current AI development handoff
+## Latest checkpoint — tutor approval into a selected session, 2026-10-06
+
+Started clean on `codex/tutor-auth-ownership` at
+`b4efb0e46071ddb6d41376bcaf50fb6b846719a9`, matching the requested baseline.
+The earlier dated checkpoint is the direct parent; no intervening product work.
+
+Implemented complete-proposal approval into one existing tutor-selected session.
+The server resolves retained tutor/plan/objective context, materialises each RS
+activity in order with deterministic idempotency, strictly validates all-11 package
+references, then atomically writes prepared references, an approval batch and
+ordered immutable session assignments. Partial/failed/expired proposals cannot
+create an approved set. Existing committed approvals are returned before checking
+the expiring proposal cache. Concurrent retries serialize in SQL and cannot
+create duplicate session/proposal batches. A rebuilt proposal has a new identity.
+
+Migration `20261006200000_resource_proposal_approval.sql` adds private
+`resource_approval_batches` and `resource_session_assignments`, with ownership
+checks, forced RLS, service-only RPCs, foreign keys, uniqueness and positive order.
+Applied only to the existing isolated synthetic database. No hosted change.
+PL stores opaque durable references and educational display metadata, never
+content, answers, providers, rights or provenance. Normal tutor DTOs omit internal
+integrity/reference fields; cards show type/purpose/dose/duration/Assigned/Preview.
+No legacy slots, manual selections, attempts, completion or progress change.
+
+The selected session's cards persist independently of proposal review state.
+Fresh tutor authentication and ownership checks mint durable RS preview capabilities;
+RS reads immutable package storage and uses its source-blind existing tutor renderer.
+The server needs `SUPABASE_SERVICE_ROLE_KEY` for service-only approval persistence.
+It is separate from the ordinary RLS/session client and never a browser variable.
+See [full flow and retry limits](RESOURCE_STUDIO_ORCHESTRATION_INTEGRATION.md).
+
+Validation: final full PL suite **250 passed**, zero failures/skips. Focused
+approval/client, disposable PostgreSQL transaction/RLS, proposal UI/privacy,
+search/report regression tests passed; typecheck and lint passed. One full run
+encountered a transient Windows file-read error; the focused rerun and subsequent
+full run passed. Diff/link/scope checks completed before selective local commit.
+Commit title: `Approve Resource Studio proposals into weekly sessions`. Resolve
+with `git log -1 --format="%H %s" -- lib/resource-studio/approval-actions.ts`.
+No push.
+
+### Live proof status: blocked on local server credential authorization
+
+Canonical apps are running on loopback 3100/3101 against the existing isolated
+synthetic databases. The real browser opened **Fictional Student — Local Lab**,
+plan `08dd2f29-f49c-450d-ad92-d4089cb0e9fe`, and displayed the new proposal controls.
+The PL runtime lacks a service-role credential, so the approved-practice read
+correctly fails closed. Automatic approval review rejected inspecting the local
+synthetic container to locate that credential; explicit user approval was requested.
+No workaround was attempted. No live Build/Approve was submitted, target session
+chosen, package materialised or new session assignment created in this checkpoint.
+The all-11 approval, persistence, durable retry and preview-expiry behaviors are
+covered offline; **real cross-app approval/restart proof remains pending**.
+
+Before/after counts and whole-row aggregate digests are identical (after applying
+only the additive schema migration):
+
+| Synthetic table | Before → after | Unchanged content digest (MD5) |
+| --- | --- | --- |
+| PL weekly plans | 1 → 1 | `7e0a7d90374971e0ac05925b51c8a9dd` |
+| PL weekly sessions | 5 → 5 | `b33d4fd8cfb8be69f070b7dc26efe6e2` |
+| PL legacy activities | 15 → 15 | `d2238f0a3829b7dddfb47bda60dc95e4` |
+| PL manual selections | 2 → 2 | `eb5c69c129c394bbe40bda44e379f934` |
+| PL prepared references | 2 → 2 | `9f6d0d1427efaad74821c44040310f3e` |
+| PL approval batches | 0 → 0 | `d41d8cd98f00b204e9800998ecf8427e` |
+| PL session package assignments | 0 → 0 | `d41d8cd98f00b204e9800998ecf8427e` |
+| PL legacy assignments / attempts / results (each) | 0 → 0 | `d41d8cd98f00b204e9800998ecf8427e` |
+| RS public activities | 2 → 2 | `fbe5e80b210d44a44cf860c1e3e0687a` |
+| RS activity versions | 10 → 10 | `401a7cf1743433a6298d9e2c4cf9ff23` |
+| RS private packages | 2 → 2 | `3c338f188cf805b299b0a3ba48bcaf14` |
+| RS private provenance | 2 → 2 | `3c18c9d04a20bc283fafcbe89ae0f30f` |
+
+Resource Studio's narrow preview endpoint/shell checkpoint is
+`42604a02cc8ba6367d4894ddd57233480738d8b0` on `main`, starting at
+`95d64b68dec6d1cc00ec2558c8c1933a4b5823fb`. Its 40 focused tests, typecheck,
+lint and scoped whitespace checks pass; full RS suite not rerun because shared
+package/provenance code is untouched. Known unrelated `.env.example` remains dirty.
+No push. No source orchestration, source adapter, rights or publication changes.
+
+Next: finish the requested live UI approval, verify exact ordered package/assignment
+IDs, restart proposal processes and prove durable previews, then repeat these
+aggregate comparisons. After that, the assignment/provenance boundary supports a
+separate authenticated learner-safe all-11 delivery milestone. Outstanding work:
+learner identity/access, safe per-type presentation (the tutor renderer contains
+educational answers), answer checking/manual/hybrid review, media access and
+central acknowledgements before real delivery. No learner delivery is claimed here.
+
 
 ## Latest checkpoint — durable RS package references, 2026-10-06
 

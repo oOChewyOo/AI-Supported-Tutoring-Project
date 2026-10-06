@@ -77,7 +77,7 @@ test('existing plan page includes report in development and refuses a missing/fo
   mocks['@/lib/data']={getWeeklyPlan:async()=>plan,listExtractedObjectives:async()=>[]};
   mocks['next/navigation']={notFound:()=>{throw Error('NOT_FOUND');}};
   const page=require('../app/plans/[id]/page.tsx').default;
-  const hasReport=element=>Array.isArray(element.props.children)&&element.props.children.some(c=>c?.type?.name==='ResourceStudioPlanReport');
+  const hasReport=element=>element?.type?.name==='ResourceStudioPlanReport'||(Array.isArray(element?.props?.children)?element.props.children.some(hasReport):element?.props?.children?hasReport(element.props.children):false);
   assert.equal(hasReport(await page({params:Promise.resolve({id:planId})})),true);
   process.env.NODE_ENV='production';assert.equal(hasReport(await page({params:Promise.resolve({id:planId})})),false);
   mocks['@/lib/data'].getWeeklyPlan=async()=>null;
