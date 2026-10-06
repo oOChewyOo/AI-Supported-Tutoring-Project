@@ -15,4 +15,5 @@ export async function assertOwnedResourcePlan(planId: string, { supabase, user }
   const { data: reflection, error: reflectionError } = await supabase.from("lesson_reflections")
     .select("id,student_id").eq("id", plan.lesson_reflection_id).eq("student_id", student.id).maybeSingle();
   if (reflectionError || !reflection || reflection.id !== plan.lesson_reflection_id || reflection.student_id !== student.id) throw deny();
+  return plan;
 }

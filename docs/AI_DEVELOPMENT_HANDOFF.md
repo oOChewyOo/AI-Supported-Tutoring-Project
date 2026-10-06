@@ -1,6 +1,6 @@
 # Practice Loop: current AI development handoff
 
-Updated 2026-09-30. Read [AGENTS.md](../AGENTS.md), [ROADMAP.md](ROADMAP.md)
+Updated 2026-10-06. Read [AGENTS.md](../AGENTS.md), [ROADMAP.md](ROADMAP.md)
 and [local layout](LOCAL_DEVELOPMENT_LAYOUT.md) before work.
 
 ## Verified Git baseline
@@ -28,6 +28,46 @@ checkpoint; inspect subsequent history instead of assuming the baseline is HEAD.
 | `8ad1ae7f1134d2470d1dab4417222eda20f2998d` | Add multi-agent development handoff documentation |
 
 ## Implemented now
+
+### Automatic practice proposal checkpoint (2026-10-06)
+
+Started clean on `codex/tutor-auth-ownership` at
+`8ac2ebdf4bc7910516f2398616a1a853ba6c431c`. Local commit title:
+`Add automatic Resource Studio practice proposals`; resolve its exact hash with
+`git log -1 --format="%H %s" -- lib/resource-studio/proposal-actions.ts`. No push.
+
+The development weekly-plan page now builds one complete RS proposal from one
+stored reflection objective, tutor-reviewed subject/year, duration and intents.
+Only those five educational fields go server-to-server using the existing bearer
+integration. Tutors review ordered all-type metadata and actual RS-rendered
+previews through expiring per-activity capabilities. No learner/tutor identity,
+raw reflection or profile is transmitted. Tutor ownership is checked before
+requesting and previewing; personal-data review of the educational text remains
+explicit. Partial success is retained and full rebuild is manual.
+
+This is review only: no approval, publication, assignment, completion, scoring,
+weekly sequencing or progress changes. Manual library search/selections and all
+15 legacy activity slots remain. Process-local review state expires after
+30 minutes, cache eviction or restart; PL reload loses its displayed proposal.
+See [integration contract and live proof](RESOURCE_STUDIO_ORCHESTRATION_INTEGRATION.md).
+
+Live proof used the existing fictional local plan, adding its missing synthetic
+objective as test setup. The PL Build button returned a ready two-activity plan:
+Twinkl-converted Arithmetic Input (6 questions, 4 minutes), Oak-generated Spot
+Mistake (2 examples, 4 minutes), one transition minute and one minute headroom.
+Planning used deterministic fallback, with no rebuild. Both actual previews
+rendered, including Oak attribution. Iframe button automation was unavailable;
+live preview scoring is not claimed. Seven database table counts/content hashes
+were unchanged, including zero assignments/attempts/completions and two selections.
+
+Automated validation: final full PL suite passed 228 tests, including the expanded
+10-test proposal suite and UI loading/withdrawal coverage. Typecheck, lint and
+whitespace checks passed. RS's thin API/review boundary was
+tested separately (45 focused tests including orchestration/discovery regression)
+with typecheck and lint. No migration, deployment or runtime-copy edit was made.
+
+The prior checkpoint descriptions below remain historical context. Automatic
+five-session planning and approval-to-assignment are still not implemented.
 
 - Approved-tutor authentication, ownership checks and RLS isolation.
 - Reflections, editable extracted objectives and five-session placeholder weekly

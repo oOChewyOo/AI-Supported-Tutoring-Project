@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
-import { getWeeklyPlan } from "@/lib/data";
+import { getWeeklyPlan, listExtractedObjectives } from "@/lib/data";
+import { ResourceStudioProposals } from "@/components/resource-studio-proposals";
+import { objectiveChoices } from "@/lib/resource-studio/proposal-contract";
 import { ResourceStudioPlanReport } from "@/components/resource-studio-plan-report";
 import { ResourceStudioSearch } from "@/components/resource-studio-search";
 import { PlanPageSessions } from "@/components/plan-page-sessions";
@@ -16,6 +18,9 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
   const completedActivities = activities.filter((activity) => activity.completed).length;
 
   const isDev = process.env.NODE_ENV === "development";
+  const extracted = isDev ? (await listExtractedObjectives(plan.student.id)).find(row => row.lessonReflectionId === plan.reflection.id) : undefined;
+  const objectives = extracted ? objectiveChoices({ focus_for_next_week: extracted.focusForNextWeek, developing_objectives: extracted.developingObjectives,
+    secure_objectives: extracted.secureObjectives, suggested_retrieval_items: extracted.suggestedRetrievalItems }) : [];
   const sessionList = (
     <section className="weekly-session-list">
       {plan.sessions.length ? plan.sessions.map((session) => (
@@ -56,6 +61,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
         <div><span>What we covered</span><strong>{plan.reflection.whatWeCovered}</strong></div>
       </section>
       {process.env.NODE_ENV === "development" && <ResourceStudioPlanReport planId={plan.id} />}
+      {isDev && <ResourceStudioProposals key={plan.id} planId={plan.id} objectives={objectives} subject={plan.student.subjectFocus} year={plan.student.yearGroup} />}
       {isDev ? <PlanPageSessions key={plan.id} planId={plan.id}
         sessions={plan.sessions.map(session => ({ id: session.id, session_number: session.sessionNumber, title: session.title }))}>
         <ResourceStudioSearch planId={plan.id} />

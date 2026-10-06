@@ -3,6 +3,13 @@
 Current direction: 2026-09-29. This describes planned work, not implemented
 capabilities; see [the factual handoff](AI_DEVELOPMENT_HANDOFF.md).
 
+2026-10-06 checkpoint: one structured PL learning need now invokes automatic RS
+orchestration and returns a complete tutor-review proposal with all-type RS
+previews. This does not sequence the five-session week or assign activities.
+Next: tutor approval, durable source provenance/attribution and immutable
+all-type learner delivery, then completion/scoring/progress. The historical order
+below predates RS orchestration; do not reimplement its content engine in PL.
+
 > Practice Loop proposes the week; the tutor reviews it.
 
 ## Shared target

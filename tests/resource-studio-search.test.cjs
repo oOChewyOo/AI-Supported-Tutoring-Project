@@ -218,7 +218,7 @@ test('plan keeps report, sessions and completion while adding only development s
   const plan = { id: planId, student: { id: 'student-a', name: 'Fictional' }, reflection: { date: '2026-09-27', whatWeCovered: 'Fractions' }, focus: 'Fractions',
     sessions: [{ id: 's1', sessionNumber: 1, title: 'Practice', durationMinutes: 15, completed: true,
       activities: [{ id: 'a1', title: 'Existing task', description: 'Existing description', completed: true, type: 'Topic practice', contentJson: null }] }] };
-  mocks['@/lib/data'] = { getWeeklyPlan: async () => plan };
+  mocks['@/lib/data'] = { getWeeklyPlan: async () => plan, listExtractedObjectives: async () => [] };
   mocks['next/navigation'] = { notFound: () => { throw Error('NOT_FOUND'); } };
   const page = require('../app/plans/[id]/page.tsx').default;
   const tree = await page({ params: Promise.resolve({ id: planId }) });
@@ -253,7 +253,7 @@ test('five server-rendered cards retain all fifteen legacy links and map selecti
     activities: Array.from({ length: 3 }, (_, j) => ({ id: 'a' + i + j, title: 'Legacy task', description: 'Practice',
       completed: i === 0 && j === 0, type: 'Topic practice', contentJson: { privateSentinel: 'not-a-client-prop' } }))
   }));
-  mocks['@/lib/data'] = { getWeeklyPlan: async () => ({ id: planId, student: { id: 'student', name: 'Fictional' },
+  mocks['@/lib/data'] = { listExtractedObjectives: async () => [], getWeeklyPlan: async () => ({ id: planId, student: { id: 'student', name: 'Fictional' },
     reflection: { date: '2026-09-30', whatWeCovered: 'Fractions' }, focus: 'Fractions', sessions }) };
   const tree = await require('../app/plans/[id]/page.tsx').default({ params: Promise.resolve({ id: planId }) });
   const flatten = value => Array.isArray(value) ? value.flatMap(flatten) : value?.props ? [value, ...flatten(value.props.children)] : [];
