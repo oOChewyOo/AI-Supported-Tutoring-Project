@@ -1,5 +1,47 @@
 # Practice Loop: current AI development handoff
 
+## Latest checkpoint — durable RS package references, 2026-10-06
+
+Started on `codex/tutor-auth-ownership` at
+`fa6b99af4fc24b387d75da5ff27fa75ca6aa3749`, clean; remote baseline verified.
+The new [integration foundation](RESOURCE_STUDIO_ORCHESTRATION_INTEGRATION.md)
+adds a strict all-11 opaque package-reference validator and a service-only,
+tutor-owned prepared-reference table. It stores no source provenance or content.
+Normal proposal cards/DTOs omit provider labels. RS owns immutable content and
+private provenance. Owner-confirmed source permissions are recorded internally;
+exact unavailable licence dates are not fabricated. No approval/learner delivery
+or progress behavior is added. Existing MCQ snapshots/scoring/attempts remain.
+
+Migration: `20261006180000_resource_package_references.sql`, applied only to the
+existing synthetic local database. Two live prepared references were staged for
+the fictional plan, without attaching them to activities/sessions. Final validation
+and cross-app proof are recorded below in this checkpoint's verification note.
+
+### Verification note — durable reference checkpoint
+
+Full Practice Loop suite: **231 tests passed**. Typecheck, lint and diff checks
+passed, including ownership/RLS, strict all-11 references, safe proposal DTOs and
+legacy MCQ assignment/scoring regression coverage. Documentation links and scoped
+secret-pattern checks passed. No production database was changed.
+
+Live synthetic proof used the existing fictional equivalent-fractions plan.
+A normal PL proposal and a controlled server integration request with the same
+non-identifying learning need produced arithmetic-input and spot-mistake practice.
+The controlled request materialised RS packages
+`0bfc7363-b4a3-41ed-866a-7a678e83d0fd` and
+`c8b36acc-60d9-48c4-bf06-588e6f325959`; PL stores two prepared references only.
+Both survived an RS restart with identical content integrity and idempotent retry
+results after their review capabilities became unavailable. Server inspection
+confirmed private lineage/rights and safe tutor/learner reference projections.
+
+Before/after row counts and content digests matched for weekly plans, sessions,
+legacy activities/results, RS selections, assignments and attempts. No learner
+assignment, attempt, completion or progress changed. RS publication counts also
+remained unchanged. Approval/placement and authenticated learner presentation and
+checking are future work; central acknowledgement obligations remain internal.
+
+Resolve this local checkpoint with `git log -1 --format="%H %s" -- lib/resource-studio/package-reference.ts`.
+Commit subject: `Add durable Resource Studio assignment references`. No push.
 Updated 2026-10-06. Read [AGENTS.md](../AGENTS.md), [ROADMAP.md](ROADMAP.md)
 and [local layout](LOCAL_DEVELOPMENT_LAYOUT.md) before work.
 

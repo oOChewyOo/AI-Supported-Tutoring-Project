@@ -15,7 +15,6 @@ export function ProposalReview({ proposal, onPreview, pending }: { proposal: Tut
     <p>Status: {proposal.status} · Planning: {label(proposal.planningMode)}</p>
     <ol className={styles.results}>{proposal.activities.map(activity => <li key={activity.id}>
       <h4>{label(activity.activityType)}</h4><p>{label(activity.purpose)} · {activity.dose} · {activity.estimatedMinutes} minutes</p>
-      <p>Source: {activity.sourceLabel} · {label(activity.fulfilmentMode)}</p>
       {activity.status === "failed" ? <p role="alert">Failed to prepare — {activity.failureReason}</p> : <>
         <p>Ready for review</p><button className="button button-small button-secondary" type="button" disabled={pending || !activity.previewAvailable}
           onClick={() => onPreview(activity.id)}>Preview {label(activity.activityType)}</button></>}

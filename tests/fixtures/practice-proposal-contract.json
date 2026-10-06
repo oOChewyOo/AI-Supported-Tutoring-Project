@@ -5,8 +5,8 @@
     "objective": "Complete and recognise equivalent fractions and avoid common errors when identifying equivalent fractions.",
     "requestedMinutes": 10, "plannedMinutes": 9, "headroomMinutes": 1, "planningMode": "deterministic-fallback", "status": "partial", "expiresAt": "2099-01-01T00:00:00.000Z",
     "activities": [
-      { "id": "one", "activityType": "arithmetic_input", "purpose": "fluency", "dose": "6 questions", "estimatedMinutes": 4, "fulfilmentMode": "source-converted", "sourceLabel": "Twinkl", "status": "ready", "previewToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
-      { "id": "two", "activityType": "spot_mistake", "purpose": "misconception_check", "dose": "2 mistake examples", "estimatedMinutes": 4, "fulfilmentMode": "evidence-generated", "sourceLabel": "Oak", "status": "failed", "failureReason": "This activity could not be prepared. Rebuild the proposal to try again." }
+      { "id": "one", "activityType": "arithmetic_input", "purpose": "fluency", "dose": "6 questions", "estimatedMinutes": 4, "status": "ready", "previewToken": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" },
+      { "id": "two", "activityType": "spot_mistake", "purpose": "misconception_check", "dose": "2 mistake examples", "estimatedMinutes": 4, "status": "failed", "failureReason": "This activity could not be prepared. Rebuild the proposal to try again." }
     ]
   },
   "allTypes": ["drag_drop_matching", "order_steps", "arithmetic_input", "multiple_choice", "fill_gap", "category_sort", "sentence_builder", "spot_mistake", "short_written_response", "explain_thinking", "comprehension"]

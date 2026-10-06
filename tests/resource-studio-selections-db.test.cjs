@@ -7,7 +7,7 @@ const { PGlite } = require('@electric-sql/pglite');
 test('session selections in disposable in-memory PostgreSQL (not live Supabase)', async t => {
   const db = new PGlite(); t.after(() => db.close());
   await db.exec(`
-    create role anon nologin; create role authenticated nologin;
+    create role anon nologin; create role authenticated nologin; create role service_role nologin;
     create schema auth; create table auth.users(id uuid primary key);
     create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     create function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;

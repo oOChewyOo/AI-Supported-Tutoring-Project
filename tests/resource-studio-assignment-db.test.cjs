@@ -14,7 +14,7 @@ test('Resource Studio private snapshots and server scoring in real PostgreSQL', 
   const db = new PGlite();
   t.after(() => db.close());
   await db.exec(`
-    create role anon nologin; create role authenticated nologin;
+    create role anon nologin; create role authenticated nologin; create role service_role nologin;
     create schema auth; create table auth.users(id uuid primary key);
     create function auth.uid() returns uuid language sql stable as $$ select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid $$;
     create function auth.jwt() returns jsonb language sql stable as $$ select coalesce(nullif(current_setting('request.jwt.claims',true),''),'{}')::jsonb $$;
@@ -49,6 +49,27 @@ test('Resource Studio private snapshots and server scoring in real PostgreSQL', 
   const submit = async (id, answers) => (await db.query('select submit_resource_studio_attempt($1,$2::jsonb) v',[id,JSON.stringify(answers)])).rows[0].v;
   const attempt = async id => (await db.query('select get_resource_studio_attempt($1) v',[id])).rows[0].v;
   const rejects = (promise, code) => assert.rejects(promise, e => e.code === code);
+
+  await t.test('prepared package references are service-only, owner-bound, immutable and never assign a slot', async () => {
+    const packageId = randomUUID();
+    const prepare = (tutorId = a, plan = owned.plan) => db.query('select prepare_resource_package_reference($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) id',
+      [tutorId,plan,'focus_for_next_week:0',randomUUID(),'synthetic-proposal-item',packageId,randomUUID(),1,'arithmetic_input','b'.repeat(64)]);
+    for (const role of ['anon','authenticated']) {
+      await as(a,false,role); await rejects(prepare(), '42501');
+      await rejects(db.query('select * from practice_loop_private.resource_package_references'), '42501');
+    }
+    await as(null,false,'service_role');
+    await rejects(prepare(b), '42501');
+    await rejects(prepare(a,foreign.plan), '42501');
+    await prepare();
+    await as(null,false,null);
+    const row = (await db.query('select * from practice_loop_private.resource_package_references where package_id=$1',[packageId])).rows[0];
+    assert.equal(row.prepared_by,a); assert.equal(row.status,'prepared');
+    assert.doesNotMatch(JSON.stringify(row), /provider|sourceItem|licence|attribution|provenance|answer/);
+    assert.equal((await db.query('select count(*)::int n from practice_loop_private.resource_studio_assignments')).rows[0].n,0);
+    await rejects(db.query("update practice_loop_private.resource_package_references set status='prepared'"), '42501');
+    await rejects(db.query('delete from practice_loop_private.resource_package_references'), '42501');
+  });
 
   await t.test('disabled by default; ordinary tutors cannot enable the integration', async () => {
     await as(a);

@@ -3,7 +3,7 @@ export const proposalIntents = ["retrieval", "fluency", "classification", "seque
 export const proposalActivityTypes = ["drag_drop_matching", "order_steps", "arithmetic_input", "multiple_choice", "fill_gap", "category_sort", "sentence_builder", "spot_mistake", "short_written_response", "explain_thinking", "comprehension"] as const;
 export type PracticeNeed = { subject: string; year: string; objective: string; durationMinutes: number; intents: string[] };
 export type ProposalActivity = { id: string; activityType: string; purpose: string; dose: string; estimatedMinutes: number;
-  fulfilmentMode: string; sourceLabel: string; status: "ready" | "failed"; previewToken?: string; failureReason?: string };
+  status: "ready" | "failed"; previewToken?: string; failureReason?: string };
 export type PracticeProposal = { schemaVersion: "1"; id: string; reviewOnly: true; objective: string; requestedMinutes: number;
   plannedMinutes: number; headroomMinutes: number; planningMode: string; status: "ready" | "partial" | "failed";
   expiresAt: string; activities: ProposalActivity[] };
@@ -59,8 +59,6 @@ export function parsePracticeProposal(raw: unknown): PracticeProposal {
     if (status === "failed" && item.previewToken !== undefined) invalid();
     return { id: str(item.id), activityType: one(item.activityType, proposalActivityTypes), purpose: one(item.purpose, proposalIntents),
       dose: str(item.dose, 1000), estimatedMinutes: num(item.estimatedMinutes, 1, 30),
-      fulfilmentMode: one(item.fulfilmentMode, ["reuse", "source-converted", "evidence-generated", "original-generated"]),
-      sourceLabel: one(item.sourceLabel, ["Existing Resource Studio resource", "Oak", "Twinkl", "Math Salamanders", "Original Resource Studio generation"]),
       status, ...(previewToken ? { previewToken } : { failureReason: "This activity could not be prepared. Rebuild the proposal to try again." }) };
   });
   if (new Set(activities.map(item => item.id)).size !== activities.length) invalid();

@@ -1,5 +1,58 @@
 # Automatic Resource Studio proposals: tutor review only
 
+## Durable package foundation — 2026-10-06
+
+This checkpoint starts at PL `fa6b99af4fc24b387d75da5ff27fa75ca6aa3749` and RS
+`66444288d7ee782063dd797bf93cba4bac4b1da9`. Both baselines were verified pushed.
+RS now owns immutable private assignment packages covering all 11 canonical
+activity types, exact content integrity and internal provenance/rights snapshots.
+Converted/generated packages are private and do not create public library releases.
+Existing reuse pins an exact trusted release with established durable provenance.
+
+PL validates an opaque package reference: package/activity IDs, package content
+version, nullable exact published release/version, activity type, SHA-256 integrity,
+scoring mode, prepared/unassigned state, server-only content access and explicit
+`learnerDelivery: not_implemented`. No RS schema or activity content is copied here.
+RS's learner/tutor package views are reference-only; canonical answers and rich
+source lineage remain in RS. These references do not authorize browser delivery.
+
+Migration `20261006180000_resource_package_references.sql` adds one private table
+for tutor-owned prepared references: PL plan/objective key, preparer, proposal/item
+identity, package/activity/release/version, type, integrity and preparation time.
+No provider, source URL, licence, attribution, question or answer payload is stored.
+Its only insertion RPC is service-role-only and validates the active tutor and
+plan/student/reflection ownership chain. Forced RLS and revoked client grants
+prevent tutor/browser writes; immutable rows cannot be edited or deleted. There is
+no reference in a weekly session or learner activity, and no approval button/action.
+
+Normal tutor proposals and the PL-facing preview now omit source labels and
+attribution. Internal RS diagnostics still retain them. Source permissions follow
+the owner's 2026-10-06 clarification: Twinkl and Math Salamanders private delivery
+authorised; Twinkl needs no normal activity attribution; Math Salamanders keeps
+its 24-month term and approved platform credit internally without invented dates.
+Oak's text-summary guards/credit obligations remain. No legal page is built.
+
+### Compatibility audit of the existing MCQ path
+
+The original development MCQ assignment stores `source_activity_id` and exact
+`source_version` plus a private `resource-studio-mcq-v1` content snapshot in
+`practice_loop_private.resource_studio_assignments`, keyed to a PL activity slot.
+`activities.resource_studio_assigned` is the public indicator; `content_json`
+does not receive the private snapshot. `get_resource_studio_exercise` projects
+only safe display questions/options. SQL checks/submission score against the saved
+snapshot, never the latest RS resource or a browser-supplied key/score. Attempts
+reference the immutable assignment's activity ID, retain selected IDs and saved
+score/feedback, and derive their exact source version through that relationship.
+The fixed source ID, question/options shape and correct-option sets are MCQ-specific.
+This path, its completion/reporting guards, manual selections and five-session /
+legacy three-slot model are unchanged. New prepared references do not enter it.
+
+Next: implement explicit tutor approval and weekly placement using server-verified
+package references, then separate all-type learner presentation/scoring. Preserve
+the reference/provenance split and satisfy pending platform acknowledgement
+obligations before real delivery. A legacy published resource without inherited
+durable provenance must be reviewed; published status alone is not provenance.
+
 Implemented 2026-10-06 from Practice Loop `8ac2ebdf4bc7910516f2398616a1a853ba6c431c`
 and Resource Studio `2c624098e110713e3ad7d04de14092f655a50e2c`.
 
@@ -55,15 +108,15 @@ RS returns `schemaVersion`, opaque `id`, `reviewOnly: true`, `objective`,
 `requestedMinutes`, `plannedMinutes` (including transitions), `headroomMinutes`,
 `planningMode`, `status`, `expiresAt`, and ordered `activities`.
 Each activity has `id`, `activityType`, `purpose`, display `dose`,
-`estimatedMinutes`, `fulfilmentMode`, safe `sourceLabel` and `status`.
+`estimatedMinutes` and `status`.
 Ready items carry an opaque `previewToken`; failed items carry a generic
-`failureReason`. Modes are reuse, source-converted, evidence-generated and
-original-generated. No private provenance, source paths, answer sheets, rights
+`failureReason`. Source labels and fulfilment provenance are not in this contract.
+No private provenance, source paths, answer sheets, rights
 records, model prompts or rationale are included.
 
 PL reconstructs validated metadata, checks request/response agreement, unique
 activity IDs, duration arithmetic and status consistency, and replaces RS tokens
-with `previewAvailable` in initial browser state. Source labels are informational.
+with `previewAvailable` in initial browser state. Legacy source fields are dropped.
 The identical contract fixture in both repos is tested with every one of the 11
 activity types; this does not expand the MCQ-only learner assignment contract.
 
@@ -84,7 +137,7 @@ review shell exchanges it through the authorization header at
 `GET /api/integrations/practice-loop/proposal-preview`. No valid capability means
 401. The public shell itself contains no activity data. Responses are no-store.
 The iframe uses RS's existing `ActivityRendererRouter` across all 11 types;
-required attribution appears alongside it. Reviewers can inspect answers and
+internal attribution is excluded. Reviewers can inspect educational answers and
 feedback; this is an authoring preview, not a learner-safe delivery endpoint.
 
 Capabilities are bearer credentials: do not share the review iframe URL. They
@@ -152,7 +205,8 @@ because no shared orchestration/fulfilment/renderer implementation changed.
 Focused tests cover request privacy, auth/ownership, malformed/excessive inputs,
 safe response projection, all-type metadata, ordered partial results, provider
 errors, exact-version reuse, expiring previews, UI loading and withdrawn consent.
-The next checkpoint still needs tutor approval semantics, durable licensed
-provenance/attribution and immutable assignment across all 11 types, followed by
+The proposal-only checkpoint originally still needed durable provenance and
+assignment packages; those are now provided by the foundation above. Next comes
+tutor approval semantics, followed by
 learner access/completion/scoring/progress. Nothing here auto-approves, publishes,
 assigns, scores or changes the weekly-session model.

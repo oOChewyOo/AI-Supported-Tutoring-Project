@@ -39,6 +39,27 @@ afterEach(() => {
 const contract = () => require('../lib/resource-studio/proposal-contract.ts');
 const action = () => require('../lib/resource-studio/proposal-actions.ts');
 const build = () => action().buildPracticeProposalAction(planId, 'focus_for_next_week:0', controls, true);
+test('normal tutor response drops source fields even from an older upstream response', () => {
+  const value = structuredClone(fixture.response);
+  Object.assign(value.activities[0], { sourceLabel: 'Twinkl', fulfilmentMode: 'source-converted', sourceUrl: 'https://example.invalid', provenance: { provider: 'Oak' } });
+  assert.doesNotMatch(JSON.stringify(contract().parsePracticeProposal(value)), /provider|sourceLabel|sourceUrl|fulfilmentMode|Twinkl|Oak|provenance|attribution/);
+});
+test('all-eleven durable reference validation accepts only the opaque prepared contract', () => {
+  const { parseResourcePackageReference } = require('../lib/resource-studio/package-reference.ts');
+  for (const activityType of fixture.allTypes) {
+    const value = { schemaVersion: '1', packageId: planId, activityId: '33333333-3333-4333-8333-333333333333', contentVersion: 1, releaseId: null, resourceVersion: null,
+      activityType, integrity: 'b'.repeat(64), scoringMode: activityType === 'comprehension' ? 'hybrid_review' :
+        ['short_written_response', 'explain_thinking'].includes(activityType) ? 'manual_review' : 'automatic',
+      status: 'prepared', assigned: false, contentAccess: 'authenticated_server_only', learnerDelivery: 'not_implemented' };
+    assert.deepEqual(parseResourcePackageReference(value), value);
+    for (const key of ['provider','provenance','sourceItemIds','licence','attribution','canonicalActivity','answers']) {
+      assert.throws(() => parseResourcePackageReference({ ...value, [key]: 'private' }));
+    }
+    for (const change of [{ assigned: true }, { status: 'assigned' }, { packageId: 'bad' }, { contentVersion: 2 }, { integrity: 'bad' }, { scoringMode: 'wrong' }]) {
+      assert.throws(() => parseResourcePackageReference({ ...value, ...change }));
+    }
+  }
+});
 test('stored objective creates exact educational allowlist; identities and raw text never serialize', async () => {
   const state = await build(); assert.ok(state.proposal); assert.equal(state.proposal.status, 'partial');
   assert.deepEqual(JSON.parse(calls[0].options.body), fixture.request);
@@ -95,14 +116,14 @@ test('preview capability is tutor/plan bound and expires; no extra integration c
   try { assert.ok((await preview()).error); } finally { Date.now = now; }
   assert.equal(calls.length, 1);
 });
-test('review renders type/dose/purpose/source, partial failure and preview without assignment controls', () => {
+test('review renders educational metadata, partial failure and preview without source labels or assignment controls', () => {
   const { retainProposal } = require('../lib/resource-studio/proposal-store.ts');
   const proposal = retainProposal('t','p',contract().parsePracticeProposal(fixture.response));
   const { ProposalReview } = require('../components/resource-studio-proposals.tsx');
   const html = require('react-dom/server').renderToStaticMarkup(require('react').createElement(ProposalReview, { proposal, pending: false, onPreview() {} }));
-  for (const text of ['Review only','not assigned','6 questions','fluency','Twinkl','Preview arithmetic input','Failed to prepare']) assert.ok(html.includes(text));
+  for (const text of ['Review only','not assigned','6 questions','fluency','Preview arithmetic input','Failed to prepare']) assert.ok(html.includes(text));
   assert.ok(html.indexOf('arithmetic input') < html.indexOf('spot mistake'));
-  assert.doesNotMatch(html, /Accept proposal|Assign to|aaaaaaaa/);
+  assert.doesNotMatch(html, /Accept proposal|Assign to|aaaaaaaa|Twinkl|Oak|Math Salamanders|Source:|attribution/);
   assert.match(fs.readFileSync('app/plans/[id]/page.tsx','utf8'), /<ResourceStudioSearch/);
 });
 
