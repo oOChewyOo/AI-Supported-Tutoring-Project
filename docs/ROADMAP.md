@@ -7,8 +7,10 @@ capabilities; see [the factual handoff](AI_DEVELOPMENT_HANDOFF.md).
 orchestration and returns a complete tutor-review proposal with all-type RS
 previews. The original proposal checkpoint did not sequence or assign the week.
 The 2026-10-06 approval checkpoint adds whole-proposal approval into one selected
-existing session using durable RS packages. Learner delivery remains pending.
-Next: immutable all-type learner delivery, then completion/scoring/progress. The historical order
+existing session using durable RS packages. Authenticated all-11 text-only learner
+delivery is now implemented with minimal admin-managed Supabase user/student
+mapping, separate role guards and no durable results. See [delivery proof](LEARNER_DELIVERY.md).
+Next: durable attempts and server scoring/manual review, then completion/progress. The historical order
 below predates RS orchestration; do not reimplement its content engine in PL.
 
 > Practice Loop proposes the week; the tutor reviews it.

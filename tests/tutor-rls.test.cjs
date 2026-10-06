@@ -168,7 +168,9 @@ test('full migration history: tutor ownership, quarantine, grants and RPC', asyn
   await t.test('catalog audit: only scoped policies remain and RPC is invoker with fixed search path', async () => {
     await as(null);
     const policies = (await db.query("select tablename, policyname, roles from pg_policies where schemaname='public'")).rows;
-    assert.equal(policies.length, 8);
+    assert.equal(policies.length, 9);
+    assert.deepEqual(policies.filter(p => p.tablename === 'learner_accounts').map(p => p.policyname), ['learner_reads_own_active_mapping']);
+    assert.equal(policies.filter(p => p.tablename !== 'learner_accounts').length, 8);
     assert.ok(policies.every((p) => p.roles.length === 1 && p.roles[0] === 'authenticated'));
     const rpc = (await db.query("select prosecdef, proconfig from pg_proc where proname='generate_placeholder_weekly_plan'")).rows[0];
     assert.equal(rpc.prosecdef, false);

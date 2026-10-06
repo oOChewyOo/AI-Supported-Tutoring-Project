@@ -23,3 +23,29 @@ export async function requireTutor() {
   if (tutorError || !tutor) redirect("/login?error=access");
   return { supabase, user };
 }
+
+export async function learnerMapping(session: NonNullable<Awaited<ReturnType<typeof getVerifiedSession>>>) {
+  const { data, error } = await session.supabase.from("learner_accounts")
+    .select("auth_user_id,student_id,active").eq("auth_user_id", session.user.id).eq("active", true).maybeSingle();
+  if (error || !data || data.auth_user_id !== session.user.id || data.active !== true || !data.student_id) return null;
+  return { authUserId: session.user.id, studentId: data.student_id as string };
+}
+
+/** No caller-supplied student identity; tutor membership grants no learner access. */
+export async function requireLearner() {
+  if (!isSupabaseConfigured()) redirect("/login?error=setup");
+  const session = await getVerifiedSession();
+  if (!session) redirect("/login");
+  const learner = await learnerMapping(session);
+  if (!learner) redirect("/login?error=access");
+  return { ...session, ...learner };
+}
+
+/** Login routing only. Each destination still checks its own authorization. */
+export async function accessDestination(session: NonNullable<Awaited<ReturnType<typeof getVerifiedSession>>>) {
+  const { data, error } = await session.supabase.from("tutors")
+    .select("id").eq("id", session.user.id).eq("active", true).maybeSingle();
+  if (!error && data) return "/dashboard";
+  if (await learnerMapping(session)) return "/learn";
+  return null;
+}

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient, isSupabaseConfigured } from "@/lib/supabase/server";
+import { accessDestination } from "@/lib/auth";
 
 export async function signInAction(formData: FormData) {
   if (!isSupabaseConfigured()) redirect("/login?error=setup");
@@ -12,16 +13,15 @@ export async function signInAction(formData: FormData) {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error || !data.user || data.user.is_anonymous) redirect("/login?error=credentials");
-  const { data: tutor, error: tutorError } = await supabase
-    .from("tutors").select("id").eq("id", data.user.id).eq("active", true).maybeSingle();
-  if (tutorError || !tutor) {
+  const destination = await accessDestination({ supabase, user: data.user });
+  if (!destination) {
     await supabase.auth.signOut({ scope: "local" });
     revalidatePath("/", "layout");
     redirect("/login?error=access");
   }
   // Invalidate visited pages and the shared header before changing accounts.
   revalidatePath("/", "layout");
-  redirect("/dashboard");
+  redirect(destination);
 }
 
 export async function signOutAction() {

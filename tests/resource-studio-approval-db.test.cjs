@@ -77,6 +77,32 @@ test('atomic durable proposal assignments in disposable PostgreSQL', async t => 
     const refs=(await db.query('select * from practice_loop_private.resource_package_references')).rows;
     assert.equal(refs.length,11);assert.ok(refs.every(r=>r.content_version===1));
   });
+
+  await t.test('learner practice is auth-bound, ordered, read-only and rejects swapped IDs',async()=>{
+    await as(null,false,null);
+    const learner=randomUUID(), otherLearner=randomUUID();
+    await db.query('insert into auth.users values($1),($2)',[learner,otherLearner]);
+    await db.query('insert into learner_accounts(auth_user_id,student_id) select $1,student_id from weekly_plans where id=$2',[learner,owned.plan]);
+    await db.query('insert into learner_accounts(auth_user_id,student_id) select $1,student_id from weekly_plans where id=$2',[otherLearner,foreign.plan]);
+    const read=()=>db.query('select get_learner_practice() v').then(r=>r.rows[0].v);
+    const ref=(plan=owned.plan,session=owned.sessions[0],assignment=initial[0].id)=>db.query('select get_learner_delivery_reference($1,$2,$3) v',[plan,session,assignment]).then(r=>r.rows[0].v);
+    await as(learner);const plans=await read();assert.equal(plans.length,1);assert.equal(plans[0].id,owned.plan);
+    assert.deepEqual(plans[0].sessions[0].assignments.map(a=>a.activityType),types);
+    assert.doesNotMatch(JSON.stringify(plans),/packageId|integrity|source|provenance|expectedAnswer/);
+    assert.deepEqual(await ref(),{packageId:items[0].packageId,integrity:items[0].integrity});
+    await rejects(ref(foreign.plan),'42501');await rejects(ref(owned.plan,foreign.sessions[0]),'42501');
+    await rejects(ref(owned.plan,owned.sessions[0],randomUUID()),'42501');
+    await rejects(ref(owned.plan,owned.sessions[0],items[0].packageId),'42501');
+    await rejects(db.query('select list_resource_package_assignments($1,$2)',[tutor,owned.plan]),'42501');
+    assert.equal((await db.query('select * from students')).rows.length,0);
+    await as(otherLearner);await rejects(ref(),'42501');
+    for(const id of [tutor,inactive]){await as(id);await rejects(read(),'42501');await rejects(ref(),'42501');}
+    await as(learner,true);await rejects(read(),'42501');await rejects(ref(),'42501');
+    await as(null,false,null);await db.query('update learner_accounts set active=false where auth_user_id=$1',[learner]);
+    await as(learner);await rejects(read(),'42501');await rejects(ref(),'42501');
+    await as(null,false,null);
+    assert.equal(await count('resource_studio_attempts'),0);
+  });
   await t.test('assignment and reference immutability and constrained positions',async()=>{
     for(const table of ['resource_approval_batches','resource_session_assignments']) {
       await rejects(db.query('delete from practice_loop_private.'+table),'42501');

@@ -1,0 +1,32 @@
+const {test}=require('node:test');
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {randomUUID}=require('node:crypto');
+const {PGlite}=require('@electric-sql/pglite');
+test('learner mapping is read-own-only, admin-managed, and does not relax tutor RLS',async t=>{
+ const db=new PGlite();t.after(()=>db.close());
+ await db.exec(`create role anon;create role authenticated;create role service_role bypassrls;
+ create schema auth;create table auth.users(id uuid primary key);
+ create function auth.uid() returns uuid language sql stable as $$select nullif(current_setting('request.jwt.claim.sub',true),'')::uuid$$;
+ create function auth.jwt() returns jsonb language sql stable as $$select '{}'::jsonb$$;
+ grant usage on schema public,auth to anon,authenticated,service_role;
+ grant execute on function auth.uid(),auth.jwt() to anon,authenticated;
+ alter default privileges in schema public grant all on tables to anon,authenticated;`);
+ for(const f of fs.readdirSync('supabase/migrations').filter(f=>f.endsWith('.sql')).sort())await db.exec(fs.readFileSync('supabase/migrations/'+f,'utf8').replace('create extension if not exists pgcrypto;',''));
+ const tutor=randomUUID(),otherTutor=randomUUID(),a=randomUUID(),b=randomUUID();
+ await db.query('insert into auth.users values($1),($2),($3),($4)',[tutor,otherTutor,a,b]);
+ await db.query('insert into tutors(id) values($1),($2)',[tutor,otherTutor]);
+ const students=(await db.query("insert into students(name,year_group,subject_focus,owner_tutor_id) values('Fictional A','5','Maths',$1),('Fictional B','5','Maths',$2) returning id",[tutor,otherTutor])).rows;
+ await db.query('insert into learner_accounts(auth_user_id,student_id) values($1,$2),($3,$4)',[a,students[0].id,b,students[1].id]);
+ async function as(id){await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false)",[id]);await db.exec('set role authenticated');}
+ await as(a);
+ assert.deepEqual((await db.query('select student_id from learner_accounts')).rows,[{student_id:students[0].id}]);
+ for(const sql of ["insert into learner_accounts(auth_user_id,student_id) values(gen_random_uuid(),gen_random_uuid())",'update learner_accounts set active=false','delete from learner_accounts'])await assert.rejects(db.exec(sql),e=>e.code==='42501');
+ for(const table of ['students','weekly_plans','weekly_sessions','activities','tutors'])assert.equal((await db.query('select * from '+table)).rows.length,0);
+ await assert.rejects(db.query('select list_resource_package_assignments($1,$2)',[tutor,randomUUID()]),e=>e.code==='42501');
+ await as(tutor);assert.deepEqual((await db.query('select id from students')).rows,[{id:students[0].id}]);
+ assert.equal((await db.query('select * from learner_accounts')).rows.length,0);
+ await assert.rejects(db.exec('update learner_accounts set active=false'),e=>e.code==='42501');
+ await db.exec('reset role');await db.query('update learner_accounts set active=false where auth_user_id=$1',[a]);
+ await as(a);assert.equal((await db.query('select * from learner_accounts')).rows.length,0);
+});

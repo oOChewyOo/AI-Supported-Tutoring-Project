@@ -1,4 +1,40 @@
 # Practice Loop: current AI development handoff
+## Latest checkpoint — authenticated learner delivery, 2026-10-06
+
+Continued from clean `bad232fe4c60039f4506a836f84d62722fe6b0ea` on
+`codex/tutor-auth-ownership`. RS began at `2bfc413bb6ce8fcd33f041b3914bfb062c8d5e70`
+with its known unrelated `.env.example` change preserved.
+
+Learner authentication previously did not exist. The minimal existing Supabase
+Auth → student mapping is now `public.learner_accounts`, admin/service managed,
+with own-active SELECT only and no browser mutation. Migrations
+`20261006220000_learner_accounts.sql` and `20261006221000_learner_practice_reads.sql`
+were applied only to synthetic local PL. Shared login routes active tutors to
+`/dashboard`, active mapped learners to `/learn`, and denies others. Tutor and
+learner guards remain separate; existing tutor ownership/RLS is unchanged.
+
+Learner read RPCs derive identity internally and verify the full assignment chain.
+PL sends only exact package ID/integrity to RS, never learner identity. RS now
+delivers all 11 text-only types using an answer-free DTO, existing renderer controls,
+distinct expiring capability and server-private optional ephemeral checks. PL owns
+ordered session navigation and a neutral end page. No attempts, completion,
+progress, tutor reporting, legacy activity changes or RS publication.
+
+See [complete implementation, security and live report](LEARNER_DELIVERY.md).
+Live fictional Session 2 rendered Arithmetic Input then Spot Mistake, supported
+private checks, and survived both app restarts through fresh capabilities. Old
+capabilities returned 401. All 13 content/result table counts and row hashes stayed
+identical. Browser iframe-click limitation and separate-tab interaction proof are
+documented. A narrow RS dev module-reload cache fix has a regression test.
+
+PL full suite 266 passed; typecheck/lint/build passed. RS full suite 1,224 passed;
+final focused set 31 passed after adding one stronger materialization test;
+typecheck/lint/build passed. This is a minimal delivery foundation, not production
+learner-account onboarding. Next: PL-owned durable attempts and trusted scoring/
+manual-review state, then completion/progress. No push. Checkpoint title:
+`Deliver approved Resource Studio activities to learners`; resolve its exact hash
+with `git log -1 --format="%H %s" -- lib/learner-practice.ts`.
+
 ## Latest checkpoint — tutor approval into a selected session, 2026-10-06
 
 Started clean on `codex/tutor-auth-ownership` at

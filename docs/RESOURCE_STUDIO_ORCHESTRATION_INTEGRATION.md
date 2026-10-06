@@ -1,5 +1,13 @@
 # Resource Studio proposals and durable session approval
 
+## Authenticated learner delivery — 2026-10-06
+
+The later [learner delivery checkpoint](LEARNER_DELIVERY.md) adds admin-managed
+Supabase learner identity and assignment-bound reads, RS all-11 text-only safe
+delivery, private ephemeral checking and PL session navigation. RS receives only
+package ID/integrity, never learner identity. No durable attempts, completion or
+progress exist. The approval checkpoint below is historical and unchanged.
+
 ## Tutor approval checkpoint — 2026-10-06
 
 One complete successful proposal is approved into one tutor-selected existing

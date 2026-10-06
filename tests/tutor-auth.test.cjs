@@ -32,11 +32,11 @@ function mockIdentity({ user = { id: 'tutor-a', is_anonymous: false }, authError
   const supabase = {
     auth: { getUser: async () => ({ data: { user }, error: authError }) },
     from(table) {
-      assert.equal(table, 'tutors'); membershipQueries++;
+      assert.ok(['tutors', 'learner_accounts'].includes(table)); membershipQueries++;
       const query = {
         select: () => query,
-        eq: (field, value) => { assert.equal(value, field === 'id' ? user.id : true); return query; },
-        maybeSingle: async () => ({ data: tutor, error: tutorError }),
+        eq: (field, value) => { assert.equal(value, ['id','auth_user_id'].includes(field) ? user.id : true); return query; },
+        maybeSingle: async () => ({ data: table === 'tutors' ? tutor : null, error: tutorError }),
       };
       return query;
     },
@@ -91,7 +91,7 @@ for (const state of [{ tutor: null }, { tutorError: new Error('missing table') }
   test('authenticated account without confirmed approval gets access guidance and a sign-out option', async () => {
     mockIdentity(state);
     const html = render(await loginPage()({ searchParams: Promise.resolve({}) }));
-    assert.match(html, /Tutor access unavailable/);
+    assert.match(html, /Access unavailable/);
     assert.match(html, /Sign out/);
     assert.doesNotMatch(html, /name="password"/);
   });
@@ -305,7 +305,7 @@ test('middleware denies anonymous tutor routes, preserves refreshed cookies and 
   } }) };
   const { NextRequest } = require('next/server');
   const { middleware, config } = require('../middleware.ts');
-  assert.deepEqual(config.matcher, ['/login', '/dashboard/:path*', '/students/:path*', '/plans/:path*', '/activities/:path*', '/dev/resource-studio/assign/:path*']);
+  assert.deepEqual(config.matcher, ['/login', '/learn/:path*', '/dashboard/:path*', '/students/:path*', '/plans/:path*', '/activities/:path*', '/dev/resource-studio/assign/:path*']);
   const response = await middleware(new NextRequest('http://localhost:3000/students/guessed-id'));
   assert.equal(response.status, 307);
   assert.equal(response.headers.get('location'), 'http://localhost:3000/login');
