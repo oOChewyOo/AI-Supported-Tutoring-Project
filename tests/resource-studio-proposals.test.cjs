@@ -191,7 +191,7 @@ test('approved session card renders only educational metadata and durable previe
   mocks.react={...react,useContext:()=>({assignments:[{id:'a',sessionId:'s2',activityType:'arithmetic_input',purpose:'fluency',dose:'6 questions',estimatedMinutes:4,status:'assigned'}]})};
   const {ApprovedSessionPractice}=require('../components/resource-studio-approved-practice.tsx');
   const html=require('react-dom/server').renderToStaticMarkup(react.createElement(ApprovedSessionPractice,{planId,sessionId:'s2'}));
-  assert.match(html,/arithmetic input/);assert.match(html,/6 questions/);assert.match(html,/4 minutes/);assert.match(html,/Assigned — learner delivery pending/);assert.match(html,/Preview arithmetic input/);
+  assert.match(html,/arithmetic input/);assert.match(html,/6 questions/);assert.match(html,/4 minutes/);assert.match(html,/Assigned/);assert.match(html,/Preview arithmetic input/);
   assert.doesNotMatch(html,/Twinkl|Oak|Math Salamanders|provider|sourceUrl|attribution|provenance|licence|license|sourceItemIds|hashes|href=/);
   assert.equal(require('react-dom/server').renderToStaticMarkup(react.createElement(ApprovedSessionPractice,{planId,sessionId:'s1'})),'');
 });

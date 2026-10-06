@@ -1,5 +1,27 @@
 # Authenticated learner delivery checkpoint — 2026-10-06
 
+## Subsequent durable-results checkpoint — 2026-10-06
+
+The historical delivery-only report below is superseded for attempts/completion
+by [durable practice results](DURABLE_PRACTICE_RESULTS.md). PL now saves one
+immutable submitted attempt per assignment through trusted server-to-server RS
+checking, shows saved learner results on reopen, derives session completion from
+all approved assignments, and reports scores/written review state to the owning
+tutor. Manual review pending does not prevent learner completion. Legacy progress
+is separate. Existing Supabase role guards, identity isolation, learner-safe
+projection and server-private scoring remain in place. RS receives only package
+context plus responses; PL never receives the private scorer payload.
+
+The existing renderers now capture response-only messages from the embedded frame.
+PL accepts messages only from that exact frame and RS origin, then authenticates
+the POST again. The server resolves the mapped student and complete assignment
+chain; browser-supplied identity, package, activity type and scores are not accepted.
+Safe result persistence needs PL's private server service-role configuration.
+The new migration was applied only to isolated synthetic PL. Both apps were
+restarted after five real UI submissions; saved learner/tutor state survived without
+delivery capabilities or proposal state. Embedded interaction worked using keyboard
+controls despite the browser automation's iframe-click limitation.
+
 ## Baselines and scope
 
 PL began clean on `codex/tutor-auth-ownership` at

@@ -40,7 +40,7 @@ export function ApprovedSessionPractice({ planId, sessionId }: { planId: string;
   return <section aria-label="Approved practice"><h3>Approved practice</h3><ol>
     {rows.map(row => <li key={row.id}><strong>{label(row.activityType)}</strong>
       <p>{label(row.purpose)} · {row.dose} · {row.estimatedMinutes} minutes</p>
-      <p>Assigned — learner delivery pending</p>
+      <p>Assigned</p>
       <button type="button" className="button button-small button-secondary" disabled={pending} onClick={() => void preview(row.id)}>Preview {label(row.activityType)}</button>
     </li>)}
   </ol>{error && <p role="alert">{error}</p>}{url && <div>

@@ -103,6 +103,27 @@ test('atomic durable proposal assignments in disposable PostgreSQL', async t => 
     await as(null,false,null);
     assert.equal(await count('resource_studio_attempts'),0);
   });
+
+  await t.test('durable all-type submissions: service-only, idempotent, isolated, immutable and separate from legacy',async()=>{
+    await as(null,false,null);
+    const learner=(await db.query('select auth_user_id from learner_accounts l join weekly_plans p on p.student_id=l.student_id where p.id=$1',[owned.plan])).rows[0].auth_user_id;
+    await db.query('update learner_accounts set active=true where auth_user_id=$1',[learner]);
+    const read=()=>db.query('select get_practice_submission_report($1) v',[owned.plan]).then(r=>r.rows[0].v);
+    function checked(i){const type=types[i],manual=['short_written_response','explain_thinking'].includes(type),pending=manual||['spot_mistake','comprehension'].includes(type);return {schemaVersion:'submission-1',activityType:type,contentVersion:1,responses:{synthetic:'Learner response'},result:{mode:manual?'manual':type==='comprehension'?'hybrid':'automatic',earned:manual?null:1,possible:manual?null:2,reviewStatus:pending?'pending':'not_required',items:[{id:'synthetic',prompt:'Explain your choice',response:'Learner response',reviewRequired:pending}]}};}
+    const save=(i=0,who=learner,session=owned.sessions[0],integrity=items[i].integrity,value=checked(i))=>db.query('select save_practice_submission($1,$2,$3,$4,$5,$6,$7::jsonb) id',[who,owned.plan,session,initial[i].id,items[i].packageId,integrity,JSON.stringify(value)]).then(r=>r.rows[0].id);
+    for(const role of ['anon','authenticated']){await as(learner,false,role);await rejects(save(),'42501');await rejects(db.query('select * from practice_loop_private.resource_practice_submissions'),'42501');}
+    await as(learner);assert.equal((await read()).filter(r=>r.attemptId).length,0);
+    await as(other);await rejects(read(),'42501');
+    await as(null,false,'service_role');await rejects(save(0,tutor),'42501');await rejects(save(0,learner,foreign.sessions[0]),'42501');await rejects(save(0,learner,owned.sessions[0],'b'.repeat(64)),'22023');
+    const first=await save();assert.equal(await save(),first);const changed=checked(0);changed.responses.synthetic='Changed retry';assert.equal(await save(0,learner,owned.sessions[0],items[0].integrity,changed),first);
+    await as(learner);let rows=await read();assert.equal(rows.filter(r=>r.attemptId).length,1);assert.equal(rows[0].response.synthetic,'Learner response');assert.ok(rows.some(r=>!r.attemptId));
+    await as(null,false,'service_role');for(let i=1;i<types.length;i++)await save(i);
+    await as(learner);rows=await read();assert.ok(rows.every(r=>r.attemptId));assert.equal(rows.length,11);assert.equal(rows.find(r=>r.activityType==='short_written_response').result.earned,null);assert.equal(rows.find(r=>r.activityType==='explain_thinking').result.reviewStatus,'pending');assert.equal(rows.find(r=>r.activityType==='comprehension').result.mode,'hybrid');
+    await as(tutor);assert.deepEqual(await read(),rows);assert.doesNotMatch(JSON.stringify(rows),/provider|sourceUrl|provenance|integrity|packageId|correctOption|expectedAnswer/);
+    await as(null,false,null);await rejects(db.query('update practice_loop_private.resource_practice_submissions set response=$1::jsonb',['{}']),'42501');
+    assert.equal(await count('resource_practice_submissions'),11);assert.equal(await count('resource_studio_attempts'),0);assert.equal((await db.query('select count(*)::int n from activity_results')).rows[0].n,0);
+    await db.query('update learner_accounts set active=false where auth_user_id=$1',[learner]);await as(learner);await rejects(read(),'42501');await as(null,false,'service_role');await rejects(save(),'42501');await as(null,false,null);
+  });
   await t.test('assignment and reference immutability and constrained positions',async()=>{
     for(const table of ['resource_approval_batches','resource_session_assignments']) {
       await rejects(db.query('delete from practice_loop_private.'+table),'42501');

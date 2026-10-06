@@ -8,6 +8,8 @@ const plan={id:ids[0],title:'Practice week',sessions:[{id:ids[1],number:2,title:
 const env={...process.env};const fetch=global.fetch;
 afterEach(()=>{process.env={...env};global.fetch=fetch;for(const k of Object.keys(mocks))delete mocks[k];for(const k of Object.keys(require.cache))if(!k.includes('node_modules')&&(/[/\\](app|lib)[/\\]/).test(k))delete require.cache[k];});
 function setup(denied=false){
+ mocks['@/lib/practice-submissions']={learnerSubmissions:async()=>[]};
+ mocks['@/components/learner-delivery-frame']={LearnerDeliveryFrame:()=>null};
  const calls=[];mocks['next/navigation']={notFound(){throw Error('not found');}};
  mocks['@/lib/auth']={requireLearner:async()=>({studentId:'mapped-only',supabase:{rpc:async(name,args)=>{calls.push({name,args});return denied?{data:null,error:{code:'42501'}}:{data:name==='get_learner_practice'?[plan]:{packageId:ids[3],integrity:'a'.repeat(64)},error:null};}}})};
  mocks['@/lib/resource-studio/learner-client']={learnerPackageDelivery:async(...args)=>{calls.push({remote:args});return 'http://127.0.0.1:3101/integrations/practice-loop/learn#synthetic';}};
@@ -36,7 +38,7 @@ test('activity next/back links stay within session; end state performs reads onl
  assert.match(html,/Next activity/);assert.ok(html.includes('/'+ids[3]));assert.doesNotMatch(html,/Previous activity/);
  html=render(await page({params:Promise.resolve({planId:ids[0],sessionId:ids[1],assignmentId:ids[3]})}));assert.match(html,/Previous activity|End of assigned practice/);
  const end=require('../app/learn/[planId]/[sessionId]/end/page.tsx').default;
- html=render(await end({params:Promise.resolve({planId:ids[0],sessionId:ids[1]})}));assert.match(html,/reached the end/);assert.doesNotMatch(html,/completed/i);
+ html=render(await end({params:Promise.resolve({planId:ids[0],sessionId:ids[1]})}));assert.match(html,/Practice still to submit/);assert.doesNotMatch(html,/Session complete/);
  assert.ok(calls.every(c=>c.remote||['get_learner_practice','get_learner_delivery_reference'].includes(c.name)));
 });
 test('delivery client sends only package/integrity using server bearer and validates capability purpose',async()=>{

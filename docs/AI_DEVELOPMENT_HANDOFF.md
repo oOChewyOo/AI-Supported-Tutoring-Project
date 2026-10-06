@@ -1,4 +1,41 @@
 # Practice Loop: current AI development handoff
+## Latest checkpoint — durable learner results and tutor progress, 2026-10-06
+
+Started clean at `867a402b4bf54a3fdfa85ef965e88ea2f379f7f0` on
+`codex/tutor-auth-ownership`; RS started at `ab12a7ea5617cc8c0a7ffd4911c1a6fd51416f92`
+with only its longstanding unrelated `.env.example` modification, left untouched.
+
+PL now owns one immutable submitted attempt per approved assignment, validated
+responses, safe RS-checked results, pending written review, derived assignment/
+session completion, and an ownership-checked tutor report. Migration
+`20261007000000_resource_practice_submissions.sql` was applied only to the isolated
+synthetic PL database. Trusted saves require a server-only service-role client;
+ordinary learner/tutor database access cannot write results. Auth helpers and
+existing tutor RLS remain separate and unchanged. RS receives only package ID,
+integrity and responses, never PL identity. Answers and provenance remain in RS.
+
+All 11 types use existing RS renderers and private scorers. Written-response types
+have null scores and pending review; Comprehension retains automatic and written
+question distinctions; Spot Mistake scores identification/correction only.
+Learner completion does not wait for tutor review. Legacy rows and percentages
+are untouched; the new report counts approved assignments separately.
+
+The full live tutor → automatic proposal → preview → Session 3 approval → learner
+submission → tutor results loop passed using fictional data, without database
+intervention in that demonstration. Existing Session 2 saved Arithmetic 5/6 and
+Spot Mistake 4/4 with pending explanations. An additional controlled manual fixture
+saved text with no numeric score. Five submissions and all three session completion
+states survived both app restarts; tutor results did too. A narrow Origin/Host
+comparison fix addressed Next's internal localhost origin and has a regression.
+
+PL full suite: 274 passed; typecheck, lint and production build passed. RS full
+suite: 1,239 passed; typecheck, lint and production build passed. Database hashes
+confirmed unchanged original packages/provenance, public RS content/versions and
+legacy PL content/results. See [full report and limitations](DURABLE_PRACTICE_RESULTS.md).
+This is a local private demonstration, not production delivery or learner onboarding.
+Local commit title: `Persist learner practice results and progress`; resolve exact
+hash with `git log -1 --format="%H %s" -- lib/practice-submissions.ts`. Do not push.
+
 ## Latest checkpoint — authenticated learner delivery, 2026-10-06
 
 Continued from clean `bad232fe4c60039f4506a836f84d62722fe6b0ea` on

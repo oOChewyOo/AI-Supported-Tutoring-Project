@@ -1,12 +1,30 @@
 # Resource Studio proposals and durable session approval
 
+## Durable submission and tutor results — 2026-10-06
+
+The [durable-results checkpoint](DURABLE_PRACTICE_RESULTS.md) closes the loop:
+PL authenticates the mapped learner and exact approved assignment, calls RS
+`POST /api/integrations/practice-loop/package-submission` with only package ID,
+integrity and responses under the server integration bearer, validates the safe
+result envelope, and commits through a service-only PL RPC. RS validates against
+the learner-safe response contract and reuses canonical private scorers. It stores
+no learner records. PL stores responses/results, not answers or provenance.
+
+One immutable submission per assignment makes retries safe. Reopen and progress
+read durable PL records without proposal caches or expiring capabilities. Automatic,
+manual and hybrid results retain their real semantics; review pending is separate
+from learner completion. Dynamic assignment counts remain separate from legacy
+three-slot progress. The real Session 3 proposal/approval/completion/tutor-return
+flow and both-app restart proof passed. Earlier checkpoint sections below describe
+their historical scope, not the current absence of these new capabilities.
+
 ## Authenticated learner delivery — 2026-10-06
 
 The later [learner delivery checkpoint](LEARNER_DELIVERY.md) adds admin-managed
 Supabase learner identity and assignment-bound reads, RS all-11 text-only safe
 delivery, private ephemeral checking and PL session navigation. RS receives only
 package ID/integrity, never learner identity. No durable attempts, completion or
-progress exist. The approval checkpoint below is historical and unchanged.
+progress existed in that checkpoint. The approval checkpoint below is historical and unchanged.
 
 ## Tutor approval checkpoint — 2026-10-06
 

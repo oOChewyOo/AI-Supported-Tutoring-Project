@@ -6,6 +6,7 @@ import { getWeeklyPlan, listExtractedObjectives } from "@/lib/data";
 import { ResourceStudioProposals } from "@/components/resource-studio-proposals";
 import { objectiveChoices } from "@/lib/resource-studio/proposal-contract";
 import { ResourceStudioPlanReport } from "@/components/resource-studio-plan-report";
+import {PracticeSubmissionReport} from "@/components/practice-submission-report";
 import { ResourceStudioSearch } from "@/components/resource-studio-search";
 import { PlanPageSessions } from "@/components/plan-page-sessions";
 import { ResourceStudioSessionSelections } from "@/components/resource-studio-session-planner";
@@ -63,6 +64,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
         <div><span>What we covered</span><strong>{plan.reflection.whatWeCovered}</strong></div>
       </section>
       {process.env.NODE_ENV === "development" && <ResourceStudioPlanReport planId={plan.id} />}
+      {isDev && <PracticeSubmissionReport planId={plan.id} sessions={plan.sessions} />}
       {isDev && <ResourceStudioProposals key={plan.id} planId={plan.id} sessions={plan.sessions.map(s => ({ id: s.id, sessionNumber: s.sessionNumber, title: s.title }))} objectives={objectives} subject={plan.student.subjectFocus} year={plan.student.yearGroup} />}
       {isDev ? <PlanPageSessions key={plan.id} planId={plan.id}
         sessions={plan.sessions.map(session => ({ id: session.id, session_number: session.sessionNumber, title: session.title }))}>

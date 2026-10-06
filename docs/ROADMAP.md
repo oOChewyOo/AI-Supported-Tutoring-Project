@@ -9,8 +9,12 @@ previews. The original proposal checkpoint did not sequence or assign the week.
 The 2026-10-06 approval checkpoint adds whole-proposal approval into one selected
 existing session using durable RS packages. Authenticated all-11 text-only learner
 delivery is now implemented with minimal admin-managed Supabase user/student
-mapping, separate role guards and no durable results. See [delivery proof](LEARNER_DELIVERY.md).
-Next: durable attempts and server scoring/manual review, then completion/progress. The historical order
+mapping and separate role guards. Durable submissions, trusted RS checking,
+pending written review, derived session completion and tutor assignment progress
+are now implemented. The complete fictional tutor → learner → tutor loop and
+restart persistence passed; see [durable proof](DURABLE_PRACTICE_RESULTS.md).
+Next: private-demo operational preparation and pilot/production hardening; manual
+review resolution and deliberate retry/reset are later product work. The historical order
 below predates RS orchestration; do not reimplement its content engine in PL.
 
 > Practice Loop proposes the week; the tutor reviews it.
