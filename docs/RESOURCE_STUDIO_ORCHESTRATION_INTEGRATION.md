@@ -1,5 +1,26 @@
 # Resource Studio proposals and durable session approval
 
+## Complete-week planning and approval — 2026-10-07
+
+The [weekly practice checkpoint](WEEKLY_PRACTICE_PLANNER.md) makes whole-week
+planning the normal tutor flow. PL deterministically creates five session needs
+from selected stored objectives/state, then calls the existing RS proposal service
+with two bounded workers. No RS source/type/fulfilment choice is passed. The v1
+educational allowlist is unchanged; selected misconception context fits inside
+the objective field. PL names, IDs, reflection/profile data and provenance are absent.
+
+Successful siblings survive a failed request. The complete five-session draft
+supports every existing RS activity preview and one **Approve & send week** action.
+Source/provenance metadata and capabilities stay out of normal draft DTOs.
+All activities materialise through the existing idempotent package client before
+one service-only database transaction creates the five session batches and weekly
+approval. No partial week is visible; conflicting assigned practice blocks send.
+Same-proposal durable retries succeed after cache expiry or restart. Existing
+learner delivery, scoring and result reporting are unchanged. Live previewing exposed internal generation citations; a narrow RS projection fix rejects those markers.
+
+Migration: `20261007120000_weekly_practice_approval.sql`, isolated synthetic PL only.
+Earlier one-session sections below retain their historical scope.
+
 ## Durable submission and tutor results — 2026-10-06
 
 The [durable-results checkpoint](DURABLE_PRACTICE_RESULTS.md) closes the loop:

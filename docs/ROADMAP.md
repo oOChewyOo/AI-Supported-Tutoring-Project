@@ -1,5 +1,15 @@
 # Practice Loop current roadmap
 
+2026-10-07: [automatic weekly practice](WEEKLY_PRACTICE_PLANNER.md) now implements
+deterministic PL sequencing across the existing five sessions, multiple selected
+learning needs, bounded automatic RS fulfilment, complete-week review and one
+atomic **Approve & send week** action. Immutable assignments use existing learner
+delivery/results. Conflicting prior assignments block replacement. Manual search
+and single-session approval remain fallbacks. This supersedes the historical
+planning/approval gaps below. Live-proof status is recorded in the linked report.
+Next: private-demo operational preparation and pilot/production hardening; later
+work includes safe replacement, richer practice variation and manual-review resolution.
+
 Current direction: 2026-09-29. This describes planned work, not implemented
 capabilities; see [the factual handoff](AI_DEVELOPMENT_HANDOFF.md).
 

@@ -214,7 +214,7 @@ test('changing filters hides stale results and pagination; pending disables the 
   const pending = searchMarkup(state, undefined, true);
   assert.match(pending, /aria-busy="true"/); assert.match(pending, /fieldset disabled/); assert.doesNotMatch(pending, /Next page/);
 });
-test('plan keeps report, sessions and completion while adding only development search with plan ID', async () => {
+test('plan keeps reports and legacy completion while weekly practice is primary and development search is a fallback', async () => {
   const plan = { id: planId, student: { id: 'student-a', name: 'Fictional' }, reflection: { date: '2026-09-27', whatWeCovered: 'Fractions' }, focus: 'Fractions',
     sessions: [{ id: 's1', sessionNumber: 1, title: 'Practice', durationMinutes: 15, completed: true,
       activities: [{ id: 'a1', title: 'Existing task', description: 'Existing description', completed: true, type: 'Topic practice', contentJson: null }] }] };
@@ -226,8 +226,10 @@ test('plan keeps report, sessions and completion while adding only development s
   const provider = children.find(c => c?.type?.name === 'PlanPageSessions');
   assert.deepEqual(provider.props.sessions, [{ id: 's1', session_number: 1, title: 'Practice' }]);
   assert.equal(provider.props.planId, planId);
-  const search = provider.props.children.find(c => c?.type?.name === 'ResourceStudioSearch');
+  const search = flatten(provider).find(c => c?.type?.name === 'ResourceStudioSearch');
   assert.deepEqual(search.props, { planId });
+  assert.ok(flatten(provider).some(c => c.type === 'summary' && c.props.children === 'Manual activity search and replacement fallback'));
+  assert.ok(children.some(c => c?.type?.name === 'WeeklyPractice'));
   assert.ok(children.some(c => c?.type?.name === 'ResourceStudioPlanReport'));
   function flatten(element) { return Array.isArray(element) ? element.flatMap(flatten) : element?.props ? [element, ...flatten(element.props.children)] : []; }
   const nodes = flatten(tree);

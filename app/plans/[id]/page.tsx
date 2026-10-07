@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
 import { getWeeklyPlan, listExtractedObjectives } from "@/lib/data";
+import { WeeklyPractice } from "@/components/weekly-practice";
 import { ResourceStudioProposals } from "@/components/resource-studio-proposals";
 import { objectiveChoices } from "@/lib/resource-studio/proposal-contract";
 import { ResourceStudioPlanReport } from "@/components/resource-studio-plan-report";
@@ -32,7 +33,8 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
             <div><h2>{session.title}</h2><p><Clock3 size={14} /> {session.durationMinutes} minutes</p></div>
             {session.completed && <span className="completion-badge"><CheckCircle2 size={14} /> Complete</span>}
           </div>
-          <div className="weekly-activity-list">
+          {isDev && <ApprovedSessionPractice planId={plan.id} sessionId={session.id} />}
+          <details><summary>Legacy practice slots</summary><div className="weekly-activity-list">
             {session.activities.length ? session.activities.map((activity) => (
               <Link className={`weekly-activity ${activity.completed ? "is-complete" : ""}`} href={`/activities/${activity.id}`} key={activity.id}>
                 <span>{activity.completed ? <CheckCircle2 size={16} /> : activity.type}</span>
@@ -40,8 +42,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
                 <ArrowRight size={16} />
               </Link>
             )) : <div className="empty-state"><h3>No activities yet</h3><p>This session does not contain any activities.</p></div>}
-          </div>
-          {isDev && <ApprovedSessionPractice planId={plan.id} sessionId={session.id} />}
+          </div></details>
           {isDev && <ResourceStudioSessionSelections sessionId={session.id} sessionNumber={session.sessionNumber} />}
         </article>
       )) : <div className="empty-state"><h3>No sessions yet</h3><p>This weekly plan does not contain any sessions.</p></div>}
@@ -57,7 +58,7 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
           <h1>{plan.student.name}&apos;s five-session week</h1>
           <p>Linked to the reflection from {new Date(`${plan.reflection.date}T12:00:00Z`).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" })}.</p>
         </div>
-        <span className="completion-badge"><CheckCircle2 size={15} /> {completedActivities} of {activities.length} activities complete</span>
+        <span className="completion-badge"><CheckCircle2 size={15} /> {completedActivities} of {activities.length} legacy activities complete</span>
       </div>
       <section className="plan-context">
         <div><span>Focus</span><strong>{plan.focus}</strong></div>
@@ -65,10 +66,11 @@ export default async function WeeklyPlanPage({ params }: { params: Promise<{ id:
       </section>
       {process.env.NODE_ENV === "development" && <ResourceStudioPlanReport planId={plan.id} />}
       {isDev && <PracticeSubmissionReport planId={plan.id} sessions={plan.sessions} />}
-      {isDev && <ResourceStudioProposals key={plan.id} planId={plan.id} sessions={plan.sessions.map(s => ({ id: s.id, sessionNumber: s.sessionNumber, title: s.title }))} objectives={objectives} subject={plan.student.subjectFocus} year={plan.student.yearGroup} />}
+      {isDev && <WeeklyPractice planId={plan.id} objectives={objectives} misconceptions={extracted?.possibleMisconceptions ?? []} subject={plan.student.subjectFocus} year={plan.student.yearGroup} />}
+      {isDev && <details><summary>Single-session fallback</summary><ResourceStudioProposals key={plan.id} planId={plan.id} sessions={plan.sessions.map(s => ({ id: s.id, sessionNumber: s.sessionNumber, title: s.title }))} objectives={objectives} subject={plan.student.subjectFocus} year={plan.student.yearGroup} /></details>}
       {isDev ? <PlanPageSessions key={plan.id} planId={plan.id}
         sessions={plan.sessions.map(session => ({ id: session.id, session_number: session.sessionNumber, title: session.title }))}>
-        <ResourceStudioSearch planId={plan.id} />
+        <details><summary>Manual activity search and replacement fallback</summary><ResourceStudioSearch planId={plan.id} /></details>
         {sessionList}
       </PlanPageSessions> : sessionList}
     </main></ApprovedPracticeProvider>

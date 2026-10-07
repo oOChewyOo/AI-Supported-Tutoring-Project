@@ -1,4 +1,35 @@
 # Practice Loop: current AI development handoff
+## Latest checkpoint — automatic complete weekly practice, 2026-10-07
+
+Started clean at `c10ebc0647667a32b5e746c116519dc9b9fdbcc2` on
+`codex/tutor-auth-ownership`. The [weekly planner report](WEEKLY_PRACTICE_PLANNER.md)
+describes the existing model audit, deterministic educational rules, multi-objective
+allocation, bounded whole-week fulfilment, tutor review and atomic send semantics.
+
+The primary flow is now selected structured learning needs → **Build weekly
+practice** → five-session review with existing RS previews → **Approve & send
+week**. PL owns sequencing and duration allocation; RS still owns all fulfilment.
+One to five objectives are supported, one educational request per session, with
+multiple activities supplied by RS. Developing/misconception needs do not
+automatically escalate to application/reasoning. Normal views remain source-blind.
+
+Migration `20261007120000_weekly_practice_approval.sql` adds immutable private
+week approvals and links to existing session batches. The service-only RPC locks
+the plan and commits all five sessions together. Same-week retries are idempotent;
+different existing assignments block replacement, including append attempts through
+the old fallback after a week is sent. Learner delivery, exact-package submissions,
+scores and reports are reused unchanged. Drafts remain temporary; sent state is
+durable. Legacy rows/results remain and their UI is labelled and collapsed.
+
+Full suite: 301 passed; typecheck, lint and production build passed.
+Migration applied only to isolated synthetic PL. Live browser verification passed, including eight previews, atomic send, two learner submissions, tutor reporting and restart persistence; see the weekly planner report.
+RS started at `8fe8d7d01709bf52ab5e2b9f3df82d1797e06178`, preserving
+its unrelated `.env.example` modification. No push. Intended local commit title:
+`Build and approve complete weekly practice`.
+
+Earlier checkpoint sections below are historical; statements that automatic
+five-session planning is absent are superseded by this checkpoint.
+
 ## Latest checkpoint — durable learner results and tutor progress, 2026-10-06
 
 Started clean at `867a402b4bf54a3fdfa85ef965e88ea2f379f7f0` on
