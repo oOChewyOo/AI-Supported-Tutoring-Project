@@ -1,4 +1,28 @@
 # Practice Loop: current AI development handoff
+## Mixed English and phonics week — 2026-10-08
+
+Started clean at `067eef4b3fe2b2c918ceac6036d559e0f75d96fe` on
+`codex/tutor-auth-ownership`. See [checkpoint proof](MIXED_ENGLISH_WEEK.md).
+The weekly planner now maps inflected inference/textual-clue needs to comprehension
+and reasoning, and spelling to retrieval/vocabulary/application. PL sends the same
+five non-identifying educational fields and retains sequencing/review/approval.
+RS owns canonical English normalization, bounded Oak discovery, source evidence,
+activity selection, generation and private answer/provenance retention.
+
+Normal synthetic reflection → reviewed objectives → five-session build → previews
+→ Approve & send week succeeded: seven activities, 46 minutes across all five
+sessions. Four spelling activities are Oak-grounded; three comprehension activities
+contain original complete passages because the audited API reading candidates did
+not supply suitable standalone text. The proof required rebuilds; failures were
+not bypassed. Existing legacy session titles remain unchanged.
+
+Tests: 302 passed; focused planner 9; typecheck/lint/build passed. The synthetic
+launcher now imports only RS local database/integration/demo overrides, preserving
+canonical real-generation configuration. No environment files, hosted services,
+database schema/data reset, or other providers' retrieval were changed. Final
+learner opening remains unverified because the existing account password was not found; no account or credential was reset. See the checkpoint report. No push.
+Intended commit title: `Plan mixed English weeks with comprehension and spelling intents`.
+
 ## Local synthetic recovery — 2026-10-08
 
 Recovered existing Docker-backed synthetic PL/RS services from clean product

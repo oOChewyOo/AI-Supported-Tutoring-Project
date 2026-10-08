@@ -64,7 +64,8 @@ if ($Action -eq 'PracticeLoop') {
     $root=$plRoot; $port=3100
 } else {
     foreach ($line in Get-Content (Join-Path $rsRuntime 'app\.env.local')) {
-        if ($line -match '^([A-Z][A-Z0-9_]*)=(.*)$') {
+        # Preserve canonical private generation and Oak configuration.
+        if ($line -match '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_ANON_KEY|SUPABASE_SERVICE_ROLE_KEY|PRACTICE_LOOP_INTEGRATION_KEY|RESOURCE_STUDIO_DEMO_MODE)=(.*)$') {
             $values[$matches[1]] = $matches[2].Trim().Trim('"').Trim("'")
         }
     }

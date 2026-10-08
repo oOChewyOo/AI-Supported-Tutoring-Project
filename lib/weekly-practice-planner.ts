@@ -45,13 +45,17 @@ export function buildWeeklyPracticePlan(row: Record<string, unknown>, selections
     const exposure = o.used++;
     o.last = index;
     const vocabulary = /\b(vocabulary|vocab|terminology|word meanings)\b/i.test(o.objective);
-    const reading = /\b(comprehension|inference|infer|reading)\b/i.test(o.objective);
-    const core = vocabulary ? "vocabulary" : reading ? "reading_comprehension" : "fluency";
+    const reading = /\b(comprehension|infer\w*|reading|textual (?:evidence|clues?)|evidence from (?:a |the )?text)\b/i.test(o.objective);
+    const spelling = /\b(spell\w*|phonic\w*|suffix\w*|prefix\w*)\b/i.test(o.objective);
+    const core = reading ? "reading_comprehension" : vocabulary || spelling ? "vocabulary" : "fluency";
     let intents = exposure === 0 || index === 4 ? ["retrieval", core] : [core];
     const checkMistake = o.mistakes.length > 0 && (exposure > 0 || o.count === 1) && (exposure % 2 === 0 || index === 4 || o.count === 1);
     if (checkMistake) intents = ["retrieval", "misconception_check"];
     else if (exposure >= 2 && !o.insecure && !o.maintenance && index !== 4) intents = ["application", "reasoning"];
     else if (exposure > 0 && exposure % 2 === 0) intents = ["retrieval", core];
+    // Interpretation is not decoding fluency; preserve the task domain even for insecure needs.
+    if (reading) intents = ["reading_comprehension", ...( /\b(infer\w*|evidence|clues?|justify)\b/i.test(o.objective) ? ["reasoning"] : ["retrieval"])];
+    else if (spelling) intents = /\b(apply|application|sentences?|context)\b/i.test(o.objective) || exposure > 0 ? ["application", "retrieval"] : ["retrieval", "vocabulary"];
     // Maintenance needs a lighter dose; reserve two minutes for transitions/headroom.
     const durationMinutes = Math.min(targetMinutes-2, o.maintenance ? 7 : 28);
     // Existing RS v1 contract has no separate misconception field. Approved educational

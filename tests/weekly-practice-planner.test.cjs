@@ -47,3 +47,11 @@ test('reject unknown/duplicate objectives, sessions, bad durations and oversized
  for(const ss of [sessions.slice(1),[...sessions.slice(1),sessions[1]],sessions.map(s=>({...s,durationMinutes:0})),sessions.map(s=>({...s,id:'bad'}))])assert.throws(()=>run(row,undefined,ss));
  assert.throws(()=>run({...row,possible_misconceptions:['x'.repeat(240)]}));assert.throws(()=>run(row,[pick(undefined,'high',[99])]));
 });
+
+test("mixed English week preserves inference/evidence and spelling intents without identity",()=>{
+ const objectives=["Spell and apply words containing the -tion pattern accurately in words and sentences.","Make simple inferences from a text and support answers with relevant evidence.","Spell longer words containing -tion accurately without relying solely on phonetic guessing.","Make simple inferences from a text.","Support inference answers with clear evidence from the text."];
+ const plan=build({focus_for_next_week:objectives,learnerName:"PRIVATE",rawReflection:"PRIVATE"},objectives.map((_,i)=>pick("focus_for_next_week:"+i)),sessions,"English and phonics","Year 6");
+ assert.equal(plan.sessions.length,5);
+ for(const s of plan.sessions){const n=s.needs[0].request; assert.ok(!n.intents.includes("fluency"));if(/infer/i.test(n.objective)){assert.equal(n.intents[0],"reading_comprehension");assert.ok(n.intents.includes("reasoning"));}else assert.ok(n.intents.includes("application")||n.intents.includes("vocabulary"));}
+ assert.doesNotMatch(JSON.stringify(plan),/PRIVATE|learnerName|rawReflection|activityType|provider/);
+});

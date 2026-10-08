@@ -47,7 +47,7 @@ engine starts. Wait for synthetic container health before signing in.
 The launcher reads existing private runtime configuration and local CLI status
 into process memory. It overrides PL's stale default port 54321 with 56321 and
 supplies the local service credential required for approvals/results. RS uses its
-existing synthetic runtime environment file. Neither canonical `.env.local` is
+existing synthetic runtime environment file only for database, integration and demo-mode overrides. Canonical private generation configuration and inherited Oak configuration remain authoritative; the historical mock provider is not imported. Neither canonical `.env.local` is
 written. Credentials are not printed or embedded in this script or documentation.
 Private runtime files and the installed CLI remain prerequisites; missing
 containers/configuration require investigation, not initialization.
