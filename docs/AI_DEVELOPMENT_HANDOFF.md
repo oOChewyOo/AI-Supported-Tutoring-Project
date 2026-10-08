@@ -1,4 +1,20 @@
 # Practice Loop: current AI development handoff
+## Local synthetic recovery — 2026-10-08
+
+Recovered existing Docker-backed synthetic PL/RS services from clean product
+baseline `c45f36a96df231a2b02e84c125f131db26353315`. Docker Desktop was stopped;
+the remembered PL directory exists but requires access outside the restricted
+shell. Project labels, workdir labels, original volumes and the historical plan
+verified identity. No reset/reseed/migration occurred. Canonical apps run with
+process-only synthetic configuration; canonical environment files are unchanged.
+See [exact PowerShell startup and stop commands](LOCAL_SYNTHETIC_STARTUP.md).
+PL multipart login redirects to authenticated dashboard (HTTP 200); RS homepage
+returns 200. Existing PL counts: 1 tutor, 1 learner account, 2 students, 4 plans,
+20 sessions, 2 weekly approvals, 7 submissions. RS's historical CLI config is
+missing, but existing containers/data remain recoverable via Docker start.
+The launcher fails rather than creating missing containers. No product changes,
+hosted changes or push. RS's unrelated `.env.example` modification is preserved.
+
 ## Latest checkpoint — automatic complete weekly practice, 2026-10-07
 
 Started clean at `c10ebc0647667a32b5e746c116519dc9b9fdbcc2` on
